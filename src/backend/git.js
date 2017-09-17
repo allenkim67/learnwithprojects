@@ -6,7 +6,7 @@ async function getCommits(project) {
   const repo = await nodegit.Repository.open(projectPath);
   const walker = repo.createRevWalk();
   walker.pushHead();
-  return await walker.getCommits();
+  return await walker.getCommitsUntil(c => true);
 }
 
 async function getFiles(commit) {

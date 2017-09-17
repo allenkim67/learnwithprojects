@@ -6,12 +6,16 @@ const git = require('./git');
 
 const app = express();
 
-app.get('/', async (req, res) => {
+app.get('/', (req, res) => {
   const projectPath = path.resolve(__dirname, '../../repos');
   const projects = fs.readdirSync(projectPath);
-  const commits = await git.getCommits(projects[0]);
+  res.send(dots.projects({projects}));
+});
+
+app.get('/:project', async (req, res) => {
+  const commits = await git.getCommits(req.params.project);
   const files = await git.getFiles(commits[0]);
-  res.send(dots.main({projects, commits, files}));
+  res.send(dots.project({commits, files}));
 });
 
 module.exports = app;

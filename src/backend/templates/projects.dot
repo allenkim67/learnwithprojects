@@ -1,0 +1,10 @@
+<body>
+  <h2>Projects</h2>
+  <ul>
+    {{~it.projects:project}}
+    <li>
+      <a href="/{{=project}}">{{=project}}</a>
+    </li>
+    {{~}}
+  </ul>
+</body>
