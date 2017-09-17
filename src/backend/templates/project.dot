@@ -2,7 +2,13 @@
   <h2>Commits</h2>
   <ul>
     {{~it.commits:commit}}
-    <li>{{=commit.message()}}</li>
+    <li>
+      {{?it.commit == commit }}<b>{{?}}
+      <a href='/{{=it.project}}/{{=commit.sha()}}'>
+        {{=commit.message()}}
+      </a>
+      {{?it.commit == commit}}</b>{{?}}
+    </li>
     {{~}}
   </ul>
 
