@@ -1,4 +1,4 @@
-const server = require('./src/server');
+const server = require('./src/backend/server');
 
 const PORT = 3000;
 
