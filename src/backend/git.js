@@ -11,7 +11,9 @@ async function getCommits(project) {
 
 async function getFiles(commit) {
   const tree = await commit.getTree();
-  return tree.entries().map(entry => entry.toString());
+  return Promise.all(tree.entries().map(async e => {
+    return {name: e.name(), body: (await e.getBlob()).toString()};
+  }));
 }
 
 module.exports = {getCommits, getFiles};

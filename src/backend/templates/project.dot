@@ -1,3 +1,7 @@
+<head>
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow-night.min.css">
+</head>
+
 <body>
   <h2>Commits</h2>
   <ul>
@@ -15,7 +19,17 @@
   <h2>Files</h2>
   <ul>
     {{~it.files:file}}
-    <li>{{=file}}</li>
+    <li>{{=file.name}}</li>
     {{~}}
   </ul>
+
+  <h2>File</h2>
+  <pre>
+    <code>{{=it.files[1].body}}</code>
+  </pre>
+
+  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  <script>
+    hljs.initHighlightingOnLoad();
+  </script>
 </body>
