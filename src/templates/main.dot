@@ -1,0 +1,22 @@
+<body>
+  <h2>Projects</h2>
+  <ul>
+    {{~it.projects:project}}
+    <li>{{=project}}</li>
+    {{~}}
+  </ul>
+
+  <h2>Commits</h2>
+  <ul>
+    {{~it.commits:commit}}
+    <li>{{=commit.message()}}</li>
+    {{~}}
+  </ul>
+
+  <h2>Files</h2>
+  <ul>
+    {{~it.files:file}}
+    <li>{{=file}}</li>
+    {{~}}
+  </ul>
+</body>
