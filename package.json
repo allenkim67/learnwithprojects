@@ -5,7 +5,8 @@
   "repository": {},
   "license": "MIT",
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "dev": "nodemon index.js -L"
   },
   "dependencies": {
     "dot": "^1.1.2",
@@ -13,6 +14,7 @@
     "nodegit": "^0.20.1"
   },
   "devDependencies": {
-    "nodemon": "^1.12.0"
+    "nodemon": "^1.12.0",
+    "webpack": "^3.6.0"
   }
 }
