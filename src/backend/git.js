@@ -11,9 +11,25 @@ async function getCommits(project) {
 
 async function getFiles(commit) {
   const tree = await commit.getTree();
-  return Promise.all(tree.entries().map(async e => {
-    return {name: e.name(), body: (await e.getBlob()).toString()};
-  }));
+
+  function getFilesIter(tree) {
+    return Promise.all(tree.entries().map(async e => {
+      if (e.isDirectory()) {
+        return {
+          name: e.name(),
+          type: 'directory',
+          children: await getFilesIter(await e.getTree())
+        };
+      } else {
+        return {
+          name: e.name(),
+          type: 'file'
+        };
+      }
+    }));
+  }
+
+  return getFilesIter(tree);
 }
 
 module.exports = {getCommits, getFiles};

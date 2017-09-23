@@ -21,7 +21,7 @@ app.get('/:project/:commit?', async (req, res) => {
 
   const commit = req.params.commit ?
     _.find(commits, c => c.sha() == req.params.commit) :
-    _.last(commits);
+    commits[0];
 
   const files = await git.getFiles(commit);
   const templateVars = {commits, commit, files, project: req.params.project};
