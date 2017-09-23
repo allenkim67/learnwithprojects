@@ -8,6 +8,8 @@ const git = require('./git');
 
 const app = express();
 
+app.use('/build', express.static(path.resolve(__dirname, '../frontend/build')));
+
 app.get('/', async (req, res) => {
   const projectPath = path.resolve(__dirname, '../../repos');
   const projects = fs.readdirSync(projectPath);
