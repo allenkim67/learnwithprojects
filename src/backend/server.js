@@ -17,14 +17,22 @@ app.get('/', async (req, res) => {
 });
 
 app.get('/:project/:commit?', async (req, res) => {
-  const commits = await git.getCommits(req.params.project);
+  const commits = _.reverse(
+    await git.getCommits(req.params.project)
+  );
 
   const commit = req.params.commit ?
     _.find(commits, c => c.sha() == req.params.commit) :
     commits[0];
 
-  const files = await git.getFiles(commit);
-  const templateVars = {commits, commit, files, project: req.params.project};
+  const {treeFiles, contentFiles} = await git.getFiles(commit);
+  const templateVars = {
+    commits,
+    commit,
+    treeFiles,
+    contentFiles,
+    project: req.params.project
+  };
 
   res.send(dots.project(templateVars));
 });

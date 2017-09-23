@@ -1,4 +1,5 @@
 const path = require('path');
+const _ = require('lodash');
 const nodegit = require('nodegit');
 
 async function getCommits(project) {
@@ -9,27 +10,48 @@ async function getCommits(project) {
   return await walker.getCommitsUntil(c => true);
 }
 
-async function getFiles(commit) {
-  const tree = await commit.getTree();
-
-  function getFilesIter(tree) {
-    return Promise.all(tree.entries().map(async e => {
-      if (e.isDirectory()) {
-        return {
-          name: e.name(),
-          type: 'directory',
-          children: await getFilesIter(await e.getTree())
-        };
-      } else {
-        return {
-          name: e.name(),
-          type: 'file'
-        };
-      }
-    }));
-  }
-
-  return getFilesIter(tree);
+async function getDiff(commit) {
+  const diffs = await commit.getDiff();
+  const patches = await diffs[0].patches();
+  //const hunks = await Promise.all(patches.map(patch => patch.hunks()));
+  //const lines = await Promise.all(hunks.map(hunk => hunk[0].lines()));
+  return patches.map(p => ({
+    fileName: p.newFile().path(),
+    newFile: p.status() == 1
+  }))
 }
 
-module.exports = {getCommits, getFiles};
+async function getFiles(commit) {
+  const tree = await commit.getTree();
+  const diffs = await getDiff(commit);
+  return getTreeFiles(tree, diffs);
+}
+
+async function getTreeFiles(tree, diffs) {
+  const contentFiles = [];
+  const treeFiles = await Promise.all(tree.entries().map(async e => {
+    if (e.isDirectory()) {
+      return {
+        name: e.name(),
+        type: 'directory',
+        children: await getTreeFiles(await e.getTree())
+      };
+    } else {
+      const file = {name: e.name(), type: 'file'};
+      const edited = _.find(diffs, d => d.fileName === file.name);
+      const newFile = _.find(diffs, d => d.fileName === file.name && d.newFile);
+
+      if (newFile || edited) {
+         contentFiles.push({
+           path: e.path(),
+           content: (await e.getBlob()).content(),
+           status: newFile ? 'new' : 'edited'
+         });
+      }
+      return file;
+    }
+  }));
+  return {contentFiles, treeFiles}
+}
+
+module.exports = {getCommits, getFiles, getDiff};

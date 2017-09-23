@@ -16,17 +16,20 @@
     {{~}}
   </ul>
 
-  <h2>Files</h2>
+  <h2>Project</h2>
   <ul>
-    {{~it.files:file}}
+    {{~it.treeFiles:file}}
     <li>{{=file.name}}</li>
     {{~}}
   </ul>
 
-  <h2>File</h2>
+  <h2>Files</h2>
+  {{~it.contentFiles:file}}
+  <h3>{{=file.path}}</h3>
   <pre>
-    <code>{{=it.files[1].body}}</code>
+    <code>{{=file.content}}</code>
   </pre>
+  {{~}}
 
   <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
   <script>
