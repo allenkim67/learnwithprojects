@@ -1,6 +1,7 @@
 const path = require('path');
 const fs = require('fs');
 const express = require('express');
+require('express-async-errors');
 const dots = require('dot').process({path: './src/backend/templates'});
 const _ = require('lodash');
 const git = require('./git');
