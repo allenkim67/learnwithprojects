@@ -36,5 +36,8 @@
       "env",
       "react"
     ]
+  },
+  "nodemonConfig": {
+    "ignore": ["src/frontend/*"]
   }
 }

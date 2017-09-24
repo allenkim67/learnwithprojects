@@ -1,14 +1,19 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
+import styles from './project.css'
 
 export default class Project extends React.Component {
   render() {
+    console.log(styles)
     return (
       <div>
         <h2>Commits</h2>
         <ul>
           {this.props.commits.map(c => <li key={c.sha}>
-            <a href={`${this.props.project}/${c.sha}`}>{c.message}</a>
+            <a className={c.sha === this.props.commit ? styles.activeCommit : ''}
+               href={`/${this.props.project}/${c.sha}`}>
+              {c.message}
+            </a>
           </li>)}
         </ul>
 
