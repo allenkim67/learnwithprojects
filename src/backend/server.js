@@ -2,18 +2,20 @@ const path = require('path');
 const fs = require('fs');
 const express = require('express');
 require('express-async-errors');
-const dots = require('dot').process({path: './src/backend/templates'});
 const _ = require('lodash');
 const git = require('./git');
 
 const app = express();
+
+app.set('view engine', 'ejs');
+app.set('views', path.resolve(__dirname, './templates'));
 
 app.use('/build', express.static(path.resolve(__dirname, '../frontend/build')));
 
 app.get('/', async (req, res) => {
   const projectPath = path.resolve(__dirname, '../../repos');
   const projects = fs.readdirSync(projectPath);
-  res.send(dots.projects({projects}));
+  res.render('projects', {projects});
 });
 
 app.get('/:project/:commit?', async (req, res) => {
@@ -34,7 +36,7 @@ app.get('/:project/:commit?', async (req, res) => {
     project: req.params.project
   };
 
-  res.send(dots.project(templateVars));
+  res.render('project', {data: templateVars});
 });
 
 app.get('/:project/:commit/:fileId', async (req, res) => {
