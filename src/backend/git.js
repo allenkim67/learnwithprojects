@@ -41,18 +41,21 @@ async function getTreeFiles(tree, diffs) {
         children: await getTreeFiles(await e.getTree())
       };
     } else {
+      const edited = _.find(diffs, d => d.fileName === e.name());
+      const newFile = _.find(diffs, d => d.fileName === e.name() && d.newFile);
+      const status = newFile ? 'newFile' : edited ? 'editedFile' : 'uneditedFile';
+
       const file = {
         name: e.name(),
-        type: 'file'
+        type: 'file',
+        status
       };
-      const edited = _.find(diffs, d => d.fileName === file.name);
-      const newFile = _.find(diffs, d => d.fileName === file.name && d.newFile);
 
       if (newFile || edited) {
          contentFiles.push({
            path: e.path(),
            content: (await e.getBlob()).toString(),
-           status: newFile ? 'new' : 'edited'
+           status
          });
       }
       return file;

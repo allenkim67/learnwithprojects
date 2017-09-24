@@ -30,16 +30,18 @@ export default class Project extends React.Component {
 
         <h2>Project</h2>
         <ul>
-          {this.state.treeFiles.map(f => (
-            <li key={f.name} onClick={this.fetchFile.bind(this, f)}>
+          {this.state.treeFiles.map(f => {
+            return <li key={f.name}
+                className={styles[f.status]}
+                onClick={this.fetchFile.bind(this, f)}>
               {f.name}
             </li>
-          ))}
+          })}
         </ul>
 
         <h2>Files</h2>
         {this.state.contentFiles.map(f => <div key={f.path}>
-          <h3>{f.path}</h3>
+          <h3 className={styles[f.status]}>{f.path}</h3>
           <SyntaxHighlighter language='python' style={tomorrow}>
             {f.content}
           </SyntaxHighlighter>

@@ -5,3 +5,11 @@
 .activeCommit {
   font-weight: bold;
 }
+
+.newFile {
+  color: green;
+}
+
+.editedFile {
+  color: red;
+}
