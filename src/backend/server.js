@@ -33,7 +33,8 @@ app.get('/:project/:commit?', async (req, res) => {
     commit: commit.sha(),
     treeFiles,
     contentFiles,
-    project: req.params.project
+    project: req.params.project,
+    comment: await git.getComment(commit)
   };
 
   res.render('project', {data: templateVars});

@@ -2,10 +2,11 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import axios from 'axios'
 import _find from 'lodash/find'
-import SyntaxHighlighter from 'react-syntax-highlighter';
-import tomorrow from 'react-syntax-highlighter/dist/styles/tomorrow-night';
+import SyntaxHighlighter from 'react-syntax-highlighter'
+import tomorrow from 'react-syntax-highlighter/dist/styles/tomorrow-night'
 import TreeView from 'react-treeview'
 import 'react-treeview/react-treeview.css'
+import Markdown from 'react-markdown'
 
 import styles from './project.css'
 
@@ -35,18 +36,21 @@ export default class Project extends React.Component {
         </ul>
 
         <h2>Files</h2>
-        {this.state.contentFiles.map(f => <div key={f.path}>
-          <h3 className={styles[f.status]}>{f.path}</h3>
+        {this.state.contentFiles.map(f => <div key={f.name}>
+          <h3 className={styles[f.status]}>{f.name}</h3>
           <SyntaxHighlighter language='python' style={tomorrow}>
             {f.content}
           </SyntaxHighlighter>
         </div>)}
+
+        <h2>Comment</h2>
+        <Markdown source={this.state.comment}/>
       </div>
     );
   }
 
   async fetchFile(f) {
-    if (_find(this.state.contentFiles, cf => cf.path == f.name)) {
+    if (_find(this.state.contentFiles, cf => cf.name == f.name)) {
 
     } else {
       const url = `/${this.state.project}/${this.state.commit}/${f.name}`;
@@ -61,7 +65,9 @@ export default class Project extends React.Component {
         {file.name}
       </div>
     } else {
-      return <TreeView key={file.name} nodeLabel={file.name}>
+      return <TreeView key={file.name}
+                       className={styles[file.status]}
+                       nodeLabel={file.name}>
         {file.children.map(this.createTreeView)}
       </TreeView>
     }

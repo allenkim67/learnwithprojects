@@ -20,7 +20,7 @@ async function getDiff(commit) {
   //const hunks = await Promise.all(patches.map(patch => patch.hunks()));
   //const lines = await Promise.all(hunks.map(hunk => hunk[0].lines()));
   return patches.map(p => ({
-    fileName: p.newFile().path(),
+    filePath: p.newFile().path(),
     newFile: p.status() == 1
   }))
 }
@@ -34,35 +34,45 @@ async function getFiles(commit) {
 async function getTreeFiles(tree, diffs) {
   const contentFiles = [];
   const entries = _.sortBy(tree.entries(), e => -e.isDirectory());
-  const treeFiles = await Promise.all(entries.map(async e => {
-    if (e.isDirectory()) {
-      return {
-        name: e.name(),
-        type: 'directory',
-        children: (await getTreeFiles(await e.getTree())).treeFiles
-      };
-    } else {
-      const edited = _.find(diffs, d => d.fileName === e.name());
-      const newFile = _.find(diffs, d => d.fileName === e.name() && d.newFile);
+  const treeFiles = await _mapEntries(
+    entries,
+    parent => ({name: parent.name(), type: 'directory'}),
+    async leaf => {
+      if (_.includes(['.gitignore', '_comment.md'], leaf.name())) return null;
+
+      const edited = _.find(diffs, d => d.filePath === leaf.path());
+      const newFile = edited && edited.newFile;
       const status = newFile ? 'newFile' : edited ? 'editedFile' : 'uneditedFile';
 
-      const file = {
-        name: e.name(),
-        type: 'file',
-        status
-      };
+      const file = {name: leaf.name(), type: 'file', status};
 
-      if (newFile || edited) {
-         contentFiles.push({
-           path: e.path(),
-           content: (await e.getBlob()).toString(),
-           status
-         });
+      if (edited) {
+        contentFiles.push({...file, content: (await leaf.getBlob()).toString()});
       }
+
       return file;
     }
-  }));
+  );
   return {contentFiles, treeFiles}
+}
+
+async function _mapEntries(entries, handleParent, handleLeaf) {
+  const mappedEntries = entries.map(async e => {
+    if (e.isDirectory()) {
+      return {
+        ...handleParent(e),
+        children: await _mapEntries(
+          (await e.getTree()).entries(),
+          handleParent,
+          handleLeaf
+        )
+      }
+    } else {
+      return await handleLeaf(e);
+    }
+  });
+
+  return _.compact(await Promise.all(mappedEntries));
 }
 
 async function getFileById(project, commitId, filePath) {
@@ -77,4 +87,14 @@ async function getFileById(project, commitId, filePath) {
   }
 }
 
-module.exports = {getCommits, getFiles, getDiff, getFileById};
+async function getComment(commit) {
+  const tree = await commit.getTree();
+  try {
+    const entry = tree.entryByName('_comment.md');
+    return (await entry.getBlob()).toString();
+  } catch (e) {
+    return '';
+  }
+}
+
+module.exports = {getCommits, getFiles, getDiff, getFileById, getComment};
