@@ -11,5 +11,9 @@ module.exports = {
       { test: /\.js$/, loader: 'babel-loader', exclude: /node_modules/ },
       { test: /\.jsx$/, loader: 'babel-loader', exclude: /node_modules/ }
     ]
+  },
+  watchOptions: {
+    poll: true,
+    aggregateTimeout: 100
   }
 };
