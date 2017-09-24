@@ -34,7 +34,7 @@ app.get('/:project/:commit?', async (req, res) => {
     treeFiles,
     contentFiles,
     project: req.params.project,
-    comment: await git.getComment(commit)
+    teachingNotes: await git.getTeachingNotes(commit)
   };
 
   res.render('project', {data: templateVars});

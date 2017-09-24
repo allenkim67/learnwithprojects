@@ -38,7 +38,7 @@ async function getTreeFiles(tree, diffs) {
     entries,
     parent => ({name: parent.name(), type: 'directory'}),
     async leaf => {
-      if (_.includes(['.gitignore', '_comment.md'], leaf.name())) return null;
+      if (_.includes(['.gitignore', '_teaching_notes.md'], leaf.name())) return null;
 
       const edited = _.find(diffs, d => d.filePath === leaf.path());
       const newFile = edited && edited.newFile;
@@ -87,14 +87,14 @@ async function getFileById(project, commitId, filePath) {
   }
 }
 
-async function getComment(commit) {
+async function getTeachingNotes(commit) {
   const tree = await commit.getTree();
   try {
-    const entry = tree.entryByName('_comment.md');
+    const entry = tree.entryByName('_teaching_notes.md');
     return (await entry.getBlob()).toString();
   } catch (e) {
     return '';
   }
 }
 
-module.exports = {getCommits, getFiles, getDiff, getFileById, getComment};
+module.exports = {getCommits, getFiles, getDiff, getFileById, getTeachingNotes};

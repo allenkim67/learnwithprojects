@@ -20,31 +20,37 @@ export default class Project extends React.Component {
   render() {
     return (
       <div>
-        <h2>Commits</h2>
-        <ul>
-          {this.state.commits.map(c => <li key={c.sha}>
-            <a className={c.sha === this.state.commit ? styles.activeCommit : ''}
-               href={`/${this.state.project}/${c.sha}`}>
-              {c.message}
-            </a>
-          </li>)}
-        </ul>
+        <div className={styles.sideBar}>
+          <h2>Commits</h2>
+          <ul>
+            {this.state.commits.map(c => <li key={c.sha}>
+              <a className={c.sha === this.state.commit ? styles.activeCommit : ''}
+                 href={`/${this.state.project}/${c.sha}`}>
+                {c.message}
+              </a>
+            </li>)}
+          </ul>
 
-        <h2>Project</h2>
-        <ul>
-          {this.state.treeFiles.map(this.createTreeView.bind(this))}
-        </ul>
+          <h2>Project</h2>
+          <ul>
+            {this.state.treeFiles.map(this.createTreeView.bind(this))}
+          </ul>
+        </div>
 
-        <h2>Files</h2>
-        {this.state.contentFiles.map(f => <div key={f.name}>
-          <h3 className={styles[f.status]}>{f.name}</h3>
-          <SyntaxHighlighter language='python' style={tomorrow}>
-            {f.content}
-          </SyntaxHighlighter>
-        </div>)}
+        <div className={styles.fileViewer}>
+          <h2>Files</h2>
+          {this.state.contentFiles.map(f => <div key={f.name}>
+            <h3 className={styles[f.status]}>{f.name}</h3>
+            <SyntaxHighlighter language='python' style={tomorrow}>
+              {f.content}
+            </SyntaxHighlighter>
+          </div>)}
+        </div>
 
-        <h2>Comment</h2>
-        <Markdown source={this.state.comment}/>
+        <div className={styles.teachingNotesViewer}>
+          <h2>Notes</h2>
+          <Markdown source={this.state.teachingNotes}/>
+        </div>
       </div>
     );
   }
