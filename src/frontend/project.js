@@ -2,8 +2,11 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import axios from 'axios'
 import _find from 'lodash/find'
+import SyntaxHighlighter from 'react-syntax-highlighter';
+import tomorrow from 'react-syntax-highlighter/dist/styles/tomorrow-night';
 
 import styles from './project.css'
+
 
 export default class Project extends React.Component {
   constructor(props) {
@@ -37,9 +40,9 @@ export default class Project extends React.Component {
         <h2>Files</h2>
         {this.state.contentFiles.map(f => <div key={f.path}>
           <h3>{f.path}</h3>
-          <pre>
-            <code>{f.content}</code>
-          </pre>
+          <SyntaxHighlighter language='python' style={tomorrow}>
+            {f.content}
+          </SyntaxHighlighter>
         </div>)}
       </div>
     );
