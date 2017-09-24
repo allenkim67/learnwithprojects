@@ -74,7 +74,7 @@ export default class Project extends React.Component {
       return <TreeView key={file.name}
                        className={styles[file.status]}
                        nodeLabel={file.name}>
-        {file.children.map(this.createTreeView)}
+        {file.children.map(this.createTreeView.bind(this))}
       </TreeView>
     }
   }
