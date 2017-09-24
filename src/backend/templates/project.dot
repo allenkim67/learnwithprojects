@@ -3,37 +3,17 @@
 </head>
 
 <body>
-  <h2>Commits</h2>
-  <ul>
-    {{~it.commits:commit}}
-    <li>
-      {{?it.commit == commit }}<b>{{?}}
-      <a href='/{{=it.project}}/{{=commit.sha()}}'>
-        {{=commit.message()}}
-      </a>
-      {{?it.commit == commit}}</b>{{?}}
-    </li>
-    {{~}}
-  </ul>
+  <div id="root"></div>
 
-  <h2>Project</h2>
-  <ul>
-    {{~it.treeFiles:file}}
-    <li>{{=file.name}}</li>
-    {{~}}
-  </ul>
+  <script>
+    DATA = {{=JSON.stringify(it)}}
+  </script>
 
-  <h2>Files</h2>
-  {{~it.contentFiles:file}}
-  <h3>{{=file.path}}</h3>
-  <pre>
-    <code>{{=file.content}}</code>
-  </pre>
-  {{~}}
+  <script src="/build/bundle.js"></script>
 
   <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+
   <script>
     hljs.initHighlightingOnLoad();
   </script>
-  <script src="/build/bundle.js"></script>
 </body>

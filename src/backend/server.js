@@ -27,10 +27,10 @@ app.get('/:project/:commit?', async (req, res) => {
 
   const {treeFiles, contentFiles} = await git.getFiles(commit);
   const templateVars = {
-    commits,
+    commits: commits.map(c => ({message: c.message(), sha: c.sha()})),
     commit,
     treeFiles,
-    contentFiles,
+    contentFiles: contentFiles.map(f => ({...f, content: f.content.toString()})),
     project: req.params.project
   };
 
