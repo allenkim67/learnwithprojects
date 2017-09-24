@@ -2,9 +2,13 @@ const path = require('path');
 const _ = require('lodash');
 const nodegit = require('nodegit');
 
-async function getCommits(project) {
+function getRepo(project) {
   const projectPath = path.resolve(__dirname, '../../repos', project);
-  const repo = await nodegit.Repository.open(projectPath);
+  return nodegit.Repository.open(projectPath);
+}
+
+async function getCommits(project) {
+  const repo = await getRepo(project);
   const walker = repo.createRevWalk();
   walker.pushHead();
   return await walker.getCommitsUntil(c => true);
@@ -37,14 +41,17 @@ async function getTreeFiles(tree, diffs) {
         children: await getTreeFiles(await e.getTree())
       };
     } else {
-      const file = {name: e.name(), type: 'file'};
+      const file = {
+        name: e.name(),
+        type: 'file'
+      };
       const edited = _.find(diffs, d => d.fileName === file.name);
       const newFile = _.find(diffs, d => d.fileName === file.name && d.newFile);
 
       if (newFile || edited) {
          contentFiles.push({
            path: e.path(),
-           content: (await e.getBlob()).content(),
+           content: (await e.getBlob()).toString(),
            status: newFile ? 'new' : 'edited'
          });
       }
@@ -54,4 +61,16 @@ async function getTreeFiles(tree, diffs) {
   return {contentFiles, treeFiles}
 }
 
-module.exports = {getCommits, getFiles, getDiff};
+async function getFileById(project, commitId, filePath) {
+  const repo = await getRepo(project);
+  const commit = await repo.getCommit(commitId);
+  const tree = await commit.getTree();
+  const entry = tree.entryByName(filePath);
+  return {
+    path: entry.path(),
+    id: entry.id().toString(),
+    content: (await entry.getBlob()).toString()
+  }
+}
+
+module.exports = {getCommits, getFiles, getDiff, getFileById};

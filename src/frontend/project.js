@@ -1,17 +1,25 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
+import axios from 'axios'
+import _find from 'lodash/find'
+
 import styles from './project.css'
 
 export default class Project extends React.Component {
+  constructor(props) {
+    super(props);
+    // initialize state from server-side seeded data
+    this.state = DATA;
+  }
+
   render() {
-    console.log(styles)
     return (
       <div>
         <h2>Commits</h2>
         <ul>
-          {this.props.commits.map(c => <li key={c.sha}>
-            <a className={c.sha === this.props.commit ? styles.activeCommit : ''}
-               href={`/${this.props.project}/${c.sha}`}>
+          {this.state.commits.map(c => <li key={c.sha}>
+            <a className={c.sha === this.state.commit ? styles.activeCommit : ''}
+               href={`/${this.state.project}/${c.sha}`}>
               {c.message}
             </a>
           </li>)}
@@ -19,13 +27,15 @@ export default class Project extends React.Component {
 
         <h2>Project</h2>
         <ul>
-          {this.props.treeFiles.map(f => <li key={f.name}>
-            {f.name}
-          </li>)}
+          {this.state.treeFiles.map(f => (
+            <li key={f.name} onClick={this.fetchFile.bind(this, f)}>
+              {f.name}
+            </li>
+          ))}
         </ul>
 
         <h2>Files</h2>
-        {this.props.contentFiles.map(f => <div key={f.path}>
+        {this.state.contentFiles.map(f => <div key={f.path}>
           <h3>{f.path}</h3>
           <pre>
             <code>{f.content}</code>
@@ -33,5 +43,15 @@ export default class Project extends React.Component {
         </div>)}
       </div>
     );
+  }
+
+  async fetchFile(f) {
+    if (_find(this.state.contentFiles, cf => cf.path == f.name)) {
+
+    } else {
+      const url = `/${this.state.project}/${this.state.commit}/${f.name}`;
+      const resp = await axios.get(url);
+      this.setState({contentFiles: [...this.state.contentFiles, resp.data]})
+    }
   }
 }

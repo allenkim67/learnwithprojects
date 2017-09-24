@@ -30,11 +30,17 @@ app.get('/:project/:commit?', async (req, res) => {
     commits: commits.map(c => ({message: c.message(), sha: c.sha()})),
     commit: commit.sha(),
     treeFiles,
-    contentFiles: contentFiles.map(f => ({...f, content: f.content.toString()})),
+    contentFiles,
     project: req.params.project
   };
 
   res.send(dots.project(templateVars));
+});
+
+app.get('/:project/:commit/:fileId', async (req, res) => {
+  const {project, commit, fileId} = req.params;
+  const file = await git.getFileById(project, commit, fileId);
+  res.json(file);
 });
 
 module.exports = app;
