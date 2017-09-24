@@ -33,12 +33,13 @@ async function getFiles(commit) {
 
 async function getTreeFiles(tree, diffs) {
   const contentFiles = [];
-  const treeFiles = await Promise.all(tree.entries().map(async e => {
+  const entries = _.sortBy(tree.entries(), e => -e.isDirectory());
+  const treeFiles = await Promise.all(entries.map(async e => {
     if (e.isDirectory()) {
       return {
         name: e.name(),
         type: 'directory',
-        children: await getTreeFiles(await e.getTree())
+        children: (await getTreeFiles(await e.getTree())).treeFiles
       };
     } else {
       const edited = _.find(diffs, d => d.fileName === e.name());

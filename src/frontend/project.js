@@ -4,9 +4,10 @@ import axios from 'axios'
 import _find from 'lodash/find'
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import tomorrow from 'react-syntax-highlighter/dist/styles/tomorrow-night';
+import TreeView from 'react-treeview'
+import 'react-treeview/react-treeview.css'
 
 import styles from './project.css'
-
 
 export default class Project extends React.Component {
   constructor(props) {
@@ -30,13 +31,7 @@ export default class Project extends React.Component {
 
         <h2>Project</h2>
         <ul>
-          {this.state.treeFiles.map(f => {
-            return <li key={f.name}
-                className={styles[f.status]}
-                onClick={this.fetchFile.bind(this, f)}>
-              {f.name}
-            </li>
-          })}
+          {this.state.treeFiles.map(this.createTreeView.bind(this))}
         </ul>
 
         <h2>Files</h2>
@@ -57,6 +52,18 @@ export default class Project extends React.Component {
       const url = `/${this.state.project}/${this.state.commit}/${f.name}`;
       const resp = await axios.get(url);
       this.setState({contentFiles: [...this.state.contentFiles, resp.data]})
+    }
+  }
+
+  createTreeView(file) {
+    if (file.type === 'file') {
+      return <div key={file.name} className={styles[file.status]}>
+        {file.name}
+      </div>
+    } else {
+      return <TreeView key={file.name} nodeLabel={file.name}>
+        {file.children.map(this.createTreeView)}
+      </TreeView>
     }
   }
 }
