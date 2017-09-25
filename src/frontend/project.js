@@ -9,6 +9,7 @@ import 'react-treeview/react-treeview.css'
 import Markdown from 'react-markdown'
 import SplitPane from 'react-split-pane'
 import '!style-loader!css-loader!./split-pane.css'
+import { Tab, Tabs, TabList, TabPanel } from 'react-tabs'
 
 import styles from './project.css'
 
@@ -23,30 +24,44 @@ export default class Project extends React.Component {
     return (
       <SplitPane split="vertical" minSize={200} defaultSize={250}>
         <div className={styles.sideBar}>
-          <h2>Commits</h2>
-          <ul>
-            {this.state.commits.map(c => <li key={c.sha}>
-              <a className={c.sha === this.state.commit ? styles.activeCommit : ''}
-                 href={`/${this.state.project}/${c.sha}`}>
-                {c.message}
-              </a>
-            </li>)}
-          </ul>
+          <Tabs>
+            <TabList>
+              <Tab>Commits</Tab>
+              <Tab>Project</Tab>
+            </TabList>
 
-          <h2>Project</h2>
-          <ul>
-            {this.state.treeFiles.map(this.createTreeView.bind(this))}
-          </ul>
+            <TabPanel>
+              <ul>
+                {this.state.commits.map(c => <li key={c.sha}>
+                  <a className={c.sha === this.state.commit ? styles.activeCommit : ''}
+                     href={`/${this.state.project}/${c.sha}`}>
+                    {c.message}
+                  </a>
+                </li>)}
+              </ul>
+            </TabPanel>
+
+            <TabPanel>
+              <ul>
+                {this.state.treeFiles.map(this.createTreeView.bind(this))}
+              </ul>
+            </TabPanel>
+          </Tabs>
         </div>
+
         <SplitPane split="vertical" minSize={500} defaultSize="50%">
           <div className={styles.fileViewer}>
-            <h2>Files</h2>
-            {this.state.contentFiles.map(f => <div key={f.name}>
-              <h3 className={styles[f.status]}>{f.name}</h3>
-              <SyntaxHighlighter language='python' style={tomorrow}>
-                {f.content}
-              </SyntaxHighlighter>
-            </div>)}
+            <Tabs>
+              <TabList>
+                {this.state.contentFiles.map(f => <Tab key={f.name}>{f.name}</Tab>)}
+              </TabList>
+
+              {this.state.contentFiles.map(f => <TabPanel key={f.name}>
+                <SyntaxHighlighter language='python' style={tomorrow}>
+                  {f.content}
+                </SyntaxHighlighter>
+              </TabPanel>)}
+            </Tabs>
           </div>
 
           <div className={styles.teachingNotesViewer}>

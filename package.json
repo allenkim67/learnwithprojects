@@ -23,6 +23,7 @@
     "react-markdown": "^2.5.0",
     "react-split-pane": "^0.1.66",
     "react-syntax-highlighter": "^5.7.0",
+    "react-tabs": "^2.0.0",
     "react-treeview": "^0.4.7"
   },
   "devDependencies": {
