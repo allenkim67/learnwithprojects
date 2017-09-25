@@ -21,6 +21,7 @@
     "react": "^15.6.1",
     "react-dom": "^15.6.1",
     "react-markdown": "^2.5.0",
+    "react-split-pane": "^0.1.66",
     "react-syntax-highlighter": "^5.7.0",
     "react-treeview": "^0.4.7"
   },

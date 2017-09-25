@@ -23,3 +23,19 @@
 .uneditedFile {
   composes: file;
 }
+
+.viewer {
+  padding: 10px;
+}
+
+.sidebar {
+  composes: viewer;
+}
+
+.fileViewer {
+  composes: viewer;
+}
+
+.teachingNotesViewer {
+  composes: viewer;
+}

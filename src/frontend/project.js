@@ -7,6 +7,8 @@ import tomorrow from 'react-syntax-highlighter/dist/styles/tomorrow-night'
 import TreeView from 'react-treeview'
 import 'react-treeview/react-treeview.css'
 import Markdown from 'react-markdown'
+import SplitPane from 'react-split-pane'
+import '!style-loader!css-loader!./split-pane.css'
 
 import styles from './project.css'
 
@@ -19,7 +21,7 @@ export default class Project extends React.Component {
 
   render() {
     return (
-      <div>
+      <SplitPane split="vertical" minSize={200} defaultSize={250}>
         <div className={styles.sideBar}>
           <h2>Commits</h2>
           <ul>
@@ -36,22 +38,23 @@ export default class Project extends React.Component {
             {this.state.treeFiles.map(this.createTreeView.bind(this))}
           </ul>
         </div>
+        <SplitPane split="vertical" minSize={500} defaultSize="50%">
+          <div className={styles.fileViewer}>
+            <h2>Files</h2>
+            {this.state.contentFiles.map(f => <div key={f.name}>
+              <h3 className={styles[f.status]}>{f.name}</h3>
+              <SyntaxHighlighter language='python' style={tomorrow}>
+                {f.content}
+              </SyntaxHighlighter>
+            </div>)}
+          </div>
 
-        <div className={styles.fileViewer}>
-          <h2>Files</h2>
-          {this.state.contentFiles.map(f => <div key={f.name}>
-            <h3 className={styles[f.status]}>{f.name}</h3>
-            <SyntaxHighlighter language='python' style={tomorrow}>
-              {f.content}
-            </SyntaxHighlighter>
-          </div>)}
-        </div>
-
-        <div className={styles.teachingNotesViewer}>
-          <h2>Notes</h2>
-          <Markdown source={this.state.teachingNotes}/>
-        </div>
-      </div>
+          <div className={styles.teachingNotesViewer}>
+            <h2>Notes</h2>
+            <Markdown source={this.state.teachingNotes}/>
+          </div>
+        </SplitPane>
+      </SplitPane>
     );
   }
 
