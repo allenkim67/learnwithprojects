@@ -6,7 +6,7 @@ import { Tab, Tabs, TabList, TabPanel } from 'react-tabs'
 import SyntaxHighlighter from 'react-syntax-highlighter'
 import tomorrow from 'react-syntax-highlighter/dist/styles/tomorrow-night'
 import styles from './fileview.css'
-import sharedStyles from '../shared.css'
+import sharedStyles from '../../shared.css'
 
 export default class FileView extends React.Component {
   render() {

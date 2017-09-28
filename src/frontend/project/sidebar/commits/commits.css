@@ -1,8 +1,3 @@
-.commitList {
-  height: calc(100vh - 34px);
-  overflow: auto;
-}
-
 .commit {
   border-bottom: thin solid #cacaca;
   cursor: pointer;

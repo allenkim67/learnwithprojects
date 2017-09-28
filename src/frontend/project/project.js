@@ -5,10 +5,10 @@ import _findIndex from 'lodash/findIndex'
 import SplitPane from 'react-split-pane'
 import styles from './project.css'
 
-import Sidebar from '../sidebar/sidebar'
-import FileView from '../fileview/fileview'
-import TeachingNotes from '../teaching-notes/teaching-notes'
-import Banner from '../banner/banner'
+import Sidebar from './sidebar/sidebar'
+import FileView from './fileview/fileview'
+import TeachingNotes from './teaching-notes/teaching-notes'
+import Banner from './banner/banner'
 
 export default class Project extends React.Component {
   constructor(props) {

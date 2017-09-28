@@ -1,14 +1,17 @@
 import React from 'react'
 import TreeView from 'react-treeview'
 import styles from './project-files.css'
-import fileStyles from '../shared.css'
+import fileStyles from '../../../shared.css'
+import sidebarStyles from '../sidebar.css'
 
 export default class ProjectFiles extends React.Component {
   render() {
     return (
-      <ul className={styles.treeview}>
-        {this.createTreeView(this.props.treeFiles)}
-      </ul>
+      <div className={sidebarStyles.container}>
+        <ul className={styles.treeview}>
+          {this.createTreeView(this.props.treeFiles)}
+        </ul>
+      </div>
     );
   }
 

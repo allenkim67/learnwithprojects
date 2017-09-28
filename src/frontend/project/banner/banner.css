@@ -1,0 +1,8 @@
+.banner {
+  line-height: 40px;
+  display: flex;
+  justify-content: space-between;
+  background: white;
+  padding: 0 20px;
+  border-top: thin solid #cacaca;
+}

@@ -2,9 +2,9 @@ import 'react-tabs/style/react-tabs.css'
 
 import React from 'react'
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs'
-import Commits from './commits'
-import ProjectFiles from './project-files'
-import styles from '../shared.css'
+import Commits from './commits/commits'
+import ProjectFiles from './project-files/project-files'
+import styles from '../../shared.css'
 
 export default class Sidebar extends React.Component {
   render() {

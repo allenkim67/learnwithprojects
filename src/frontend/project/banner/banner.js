@@ -4,18 +4,18 @@ import styles from './banner.css'
 export default class Banner extends React.Component {
   render() {
     return (
-      <div>
+      <div className={styles.banner}>
         <span>
-          { this.prevCommitSha ?
+          { this.props.prevCommit ?
             <a href={`/${this.props.project}/${this.props.prevCommit.sha}`}>&lt;&lt; previous</a> :
             null }
         </span>
         <span>
-          {this.currentCommitMessage}
+          {this.props.currentCommitMessage}
         </span>
         <span>
-          { this.nextCommitSha ?
-            <a href={`/${this.state.project}/${this.props.nextCommit.sha}`}>next &gt;&gt;</a> :
+          { this.props.nextCommit ?
+            <a href={`/${this.props.project}/${this.props.nextCommit.sha}`}>next &gt;&gt;</a> :
             null }
         </span>
       </div>
