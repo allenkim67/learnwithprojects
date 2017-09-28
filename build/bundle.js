@@ -35168,8 +35168,8 @@ if(content.locals) module.exports = content.locals;
 if(false) {
 	// When the styles change, update the <style> tags
 	if(!content.locals) {
-		module.hot.accept("!!../../node_modules/css-loader/index.js??ref--2-1!./project.css", function() {
-			var newContent = require("!!../../node_modules/css-loader/index.js??ref--2-1!./project.css");
+		module.hot.accept("!!../../../node_modules/css-loader/index.js??ref--2-1!./project.css", function() {
+			var newContent = require("!!../../../node_modules/css-loader/index.js??ref--2-1!./project.css");
 			if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
 			update(newContent);
 		});
@@ -35187,13 +35187,13 @@ exports = module.exports = __webpack_require__(13)(undefined);
 
 
 // module
-exports.push([module.i, ".container_38i6G {\n  display: flex;\n  min-height: 100vh;\n  flex-direction: column;\n}\n\n.body_2mpbp {\n  flex: 1;\n}\n\n.footer_28uWW {\n  line-height: 40px;\n  display: flex;\n  justify-content: space-between;\n  background: white;\n  z-index: 1;\n  padding: 0 20px;\n  border-top: thin solid #cacaca;\n}", ""]);
+exports.push([module.i, ".container_3IMT7 {\n  display: flex;\n  min-height: 100vh;\n  flex-direction: column;\n}\n\n.body_2mH5H {\n  flex: 1;\n}\n\n.footer_1C6Ok {\n  line-height: 40px;\n  display: flex;\n  justify-content: space-between;\n  background: white;\n  z-index: 1;\n  padding: 0 20px;\n  border-top: thin solid #cacaca;\n}", ""]);
 
 // exports
 exports.locals = {
-	"container": "container_38i6G",
-	"body": "body_2mpbp",
-	"footer": "footer_28uWW"
+	"container": "container_3IMT7",
+	"body": "body_2mH5H",
+	"footer": "footer_1C6Ok"
 };
 
 /***/ }),
