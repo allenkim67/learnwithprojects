@@ -1,0 +1,21 @@
+.tabList {
+  margin: 0;
+}
+
+.file {
+  cursor: pointer;
+}
+
+.newFile {
+  composes: file;
+  color: green;
+}
+
+.editedFile {
+  composes: file;
+  color: red;
+}
+
+.uneditedFile {
+  composes: file;
+}

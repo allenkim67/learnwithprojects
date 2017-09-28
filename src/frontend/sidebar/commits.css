@@ -1,0 +1,27 @@
+.commitList {
+  height: calc(100vh - 34px);
+  overflow: auto;
+}
+
+.commit {
+  border-bottom: thin solid #cacaca;
+  cursor: pointer;
+}
+
+.commit:hover {
+  background: #e8f6ff;
+}
+
+.commitTitle {
+  display: block;
+  padding: 7px 12px 7px 15px;
+}
+
+.activeCommitTitle {
+  composes: commitTitle;
+  font-weight: bold;
+}
+
+.unactiveCommitTitle {
+  composes: commitTitle;
+}

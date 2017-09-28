@@ -10,3 +10,13 @@ ul {
 pre {
   margin: 0;
 }
+
+.Resizer {
+  width: 1px;
+  background: #cacaca;
+  cursor: col-resize;
+}
+
+.tree-view_item {
+  line-height: 23px;
+}
