@@ -10,7 +10,7 @@ const app = express();
 app.set('view engine', 'ejs');
 app.set('views', path.resolve(__dirname, './templates'));
 
-app.use('/build', express.static(path.resolve(__dirname, '../frontend/build')));
+app.use('/build', express.static(path.resolve(__dirname, '../../build')));
 
 app.get('/', async (req, res) => {
   const projectPath = path.resolve(__dirname, '../../repos');

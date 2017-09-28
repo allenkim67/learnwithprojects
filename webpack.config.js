@@ -3,7 +3,7 @@ const path = require('path');
 module.exports = {
   entry: './src/frontend/index.js',
   output: {
-    path: path.resolve('./src/frontend/build'),
+    path: path.resolve('./build'),
     filename: 'bundle.js'
   },
   module: {

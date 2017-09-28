@@ -46,7 +46,8 @@
   },
   "nodemonConfig": {
     "ignore": [
-      "src/frontend/*"
+      "src/frontend/*",
+      "build/"
     ]
   }
 }

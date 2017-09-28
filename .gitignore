@@ -5,4 +5,4 @@ DS_Store
 .idea
 .vagrant
 
-src/frontend/build
+./build
