@@ -55,7 +55,9 @@ export default class Project extends React.Component {
           <div className={styles.fileViewer}>
             <Tabs>
               <TabList>
-                {this.state.contentFiles.map(f => <Tab key={f.name}>{f.name}</Tab>)}
+                {this.state.contentFiles.map(f => <Tab key={f.name}>
+                  <span className={styles[f.status]}>{f.name}</span>
+                </Tab>)}
               </TabList>
 
               {this.state.contentFiles.map(f => <TabPanel key={f.name}>
