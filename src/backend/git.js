@@ -81,8 +81,9 @@ async function getFileById(project, commitId, filePath) {
   const tree = await commit.getTree();
   const entry = tree.entryByName(filePath);
   return {
-    path: entry.path(),
-    id: entry.id().toString(),
+    name: entry.path(),
+    type: 'file',
+    status: 'unedited',
     content: (await entry.getBlob()).toString()
   }
 }

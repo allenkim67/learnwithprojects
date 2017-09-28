@@ -2,6 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import axios from 'axios'
 import _find from 'lodash/find'
+import _findIndex from 'lodash/findIndex'
 import SyntaxHighlighter from 'react-syntax-highlighter'
 import tomorrow from 'react-syntax-highlighter/dist/styles/tomorrow-night'
 import TreeView from 'react-treeview'
@@ -19,7 +20,7 @@ export default class Project extends React.Component {
   constructor(props) {
     super(props);
     // initialize state from server-side seeded data
-    this.state = DATA;
+    this.state = Object.assign({}, DATA, {fileTabIndex: 0});
   }
 
   render() {
@@ -53,7 +54,7 @@ export default class Project extends React.Component {
 
         <SplitPane split="vertical" minSize={500} defaultSize="50%">
           <div className={styles.fileViewer}>
-            <Tabs>
+            <Tabs selectedIndex={this.state.fileTabIndex} onSelect={i => this.setState({fileTabIndex: i})}>
               <TabList className={"react-tabs__tab-list " + styles.tabList}>
                 {this.state.contentFiles.map(f => <Tab key={f.name}>
                   <span className={styles[f.status]}>{f.name}</span>
@@ -80,25 +81,34 @@ export default class Project extends React.Component {
     );
   }
 
-  async fetchFile(f) {
-    if (_find(this.state.contentFiles, cf => cf.name == f.name)) {
+  async selectFile(file) {
+    const idx = _findIndex(this.state.contentFiles, f => f.name === file.name);
 
+    if (idx > -1) {
+      this.setState({fileTabIndex: idx});
     } else {
-      const url = `/${this.state.project}/${this.state.commit}/${f.name}`;
-      const resp = await axios.get(url);
-      this.setState({contentFiles: [...this.state.contentFiles, resp.data]})
+      const url = `/${this.state.project}/${this.state.commit}/${file.name}`;
+      const newFile = (await axios.get(url)).data;
+      this.setState({
+        contentFiles: [...this.state.contentFiles, newFile],
+        fileTabIndex: this.state.contentFiles.length
+      });
     }
   }
 
   createTreeView() {
     const createTreeViewIter = file => {
       if (file.type === 'file') {
-        return <div key={file.name} className={"tree-view_item " + styles[file.status]}>
-          {file.name}
-        </div>
+        return (
+          <div key={file.name}
+               className={"tree-view_item " + styles[file.status]}
+               onClick={this.selectFile.bind(this, file)}>
+            {file.name}
+          </div>
+        )
       } else {
         return <TreeView key={file.name} nodeLabel={file.name}>
-          <div className={styles[file.status]}>{file.children.map(createTreeViewIter)}</div>
+          {file.children.map(createTreeViewIter)}
         </TreeView>
       }
     };
