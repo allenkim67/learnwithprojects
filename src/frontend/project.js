@@ -45,7 +45,7 @@ export default class Project extends React.Component {
 
             <TabPanel>
               <ul className={styles.treeview}>
-                {this.state.treeFiles.map(this.createTreeView.bind(this))}
+                {this.createTreeView()}
               </ul>
             </TabPanel>
           </Tabs>
@@ -88,17 +88,21 @@ export default class Project extends React.Component {
     }
   }
 
-  createTreeView(file) {
-    if (file.type === 'file') {
-      return <div key={file.name} className={"tree-view_item " + styles[file.status]}>
-        {file.name}
-      </div>
-    } else {
-      return <TreeView key={file.name}
-                       className={styles[file.status]}
-                       nodeLabel={file.name}>
-        <div>{file.children.map(this.createTreeView.bind(this))}</div>
-      </TreeView>
-    }
+  createTreeView() {
+    const createTreeViewIter = file => {
+      if (file.type === 'file') {
+        return <div key={file.name} className={"tree-view_item " + styles[file.status]}>
+          {file.name}
+        </div>
+      } else {
+        return <TreeView key={file.name} nodeLabel={file.name}>
+          <div className={styles[file.status]}>{file.children.map(createTreeViewIter)}</div>
+        </TreeView>
+      }
+    };
+
+    return <TreeView nodeLabel={this.state.project}>
+      {this.state.treeFiles.map(createTreeViewIter)}
+    </TreeView>;
   }
 }
