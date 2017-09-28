@@ -25,59 +25,76 @@ export default class Project extends React.Component {
 
   render() {
     return (
-      <SplitPane split="vertical" minSize={200} defaultSize={250}>
-        <div className={styles.sideBar}>
-          <Tabs>
-            <TabList className={"react-tabs__tab-list " + styles.tabList}>
-              <Tab>Commits</Tab>
-              <Tab>Project</Tab>
-            </TabList>
+      <div className={styles.container}>
+        <div className={styles.body}>
+          <SplitPane split="vertical" minSize={200} defaultSize={250}>
+            <div className={styles.sideBar}>
+              <Tabs>
+                <TabList className={"react-tabs__tab-list " + styles.tabList}>
+                  <Tab>Commits</Tab>
+                  <Tab>Project</Tab>
+                </TabList>
 
-            <TabPanel>
-              <ul className={styles.commitList}>
-                {this.state.commits.map(c => <li key={c.sha} className={styles.commit}>
-                  <a className={c.sha === this.state.commit ? styles.activeCommitTitle : styles.commitTitle}
-                     href={`/${this.state.project}/${c.sha}`}>
-                    {c.message}
-                  </a>
-                </li>)}
-              </ul>
-            </TabPanel>
+                <TabPanel>
+                  <ul className={styles.commitList}>
+                    {this.state.commits.map(c => <li key={c.sha} className={styles.commit}>
+                      <a className={c === this.currentCommit() ? styles.activeCommitTitle : styles.commitTitle}
+                         href={`/${this.state.project}/${c.sha}`}>
+                        {c.message}
+                      </a>
+                    </li>)}
+                  </ul>
+                </TabPanel>
 
-            <TabPanel>
-              <ul className={styles.treeview}>
-                {this.createTreeView()}
-              </ul>
-            </TabPanel>
-          </Tabs>
+                <TabPanel>
+                  <ul className={styles.treeview}>
+                    {this.createTreeView()}
+                  </ul>
+                </TabPanel>
+              </Tabs>
+            </div>
+
+            <SplitPane split="vertical" minSize={500} defaultSize="50%">
+              <div className={styles.fileViewer}>
+                <Tabs selectedIndex={this.state.fileTabIndex} onSelect={i => this.setState({fileTabIndex: i})}>
+                  <TabList className={"react-tabs__tab-list " + styles.tabList}>
+                    {this.state.contentFiles.map(f => <Tab key={f.name}>
+                      <span className={styles[f.status]}>{f.name}</span>
+                    </Tab>)}
+                  </TabList>
+
+                  {this.state.contentFiles.map(f => <TabPanel key={f.name}>
+                    <SyntaxHighlighter language='python'
+                                       style={tomorrow}
+                                       className={styles.code}
+                                       showLineNumbers={true}>
+                      {f.content}
+                    </SyntaxHighlighter>
+                  </TabPanel>)}
+                </Tabs>
+              </div>
+
+              <div className={styles.teachingNotesViewer}>
+                <h2>Notes</h2>
+                <Markdown source={this.state.teachingNotes}/>
+              </div>
+            </SplitPane>
+          </SplitPane>
         </div>
-
-        <SplitPane split="vertical" minSize={500} defaultSize="50%">
-          <div className={styles.fileViewer}>
-            <Tabs selectedIndex={this.state.fileTabIndex} onSelect={i => this.setState({fileTabIndex: i})}>
-              <TabList className={"react-tabs__tab-list " + styles.tabList}>
-                {this.state.contentFiles.map(f => <Tab key={f.name}>
-                  <span className={styles[f.status]}>{f.name}</span>
-                </Tab>)}
-              </TabList>
-
-              {this.state.contentFiles.map(f => <TabPanel key={f.name}>
-                <SyntaxHighlighter language='python'
-                                   style={tomorrow}
-                                   className={styles.code}
-                                   showLineNumbers={true}>
-                  {f.content}
-                </SyntaxHighlighter>
-              </TabPanel>)}
-            </Tabs>
-          </div>
-
-          <div className={styles.teachingNotesViewer}>
-            <h2>Notes</h2>
-            <Markdown source={this.state.teachingNotes}/>
-          </div>
-        </SplitPane>
-      </SplitPane>
+        <div className={styles.footer}>
+          <span>
+            { this.prevCommit() ?
+              <a href={`/${this.state.project}/${this.prevCommit().sha}`}>&lt;&lt; previous</a> :
+              null }
+          </span>
+          <span>{this.currentCommit().message}</span>
+          <span>
+            { this.nextCommit() ?
+              <a href={`/${this.state.project}/${this.nextCommit().sha}`}>next &gt;&gt;</a> :
+              null }
+          </span>
+        </div>
+      </div>
     );
   }
 
@@ -116,5 +133,19 @@ export default class Project extends React.Component {
     return <TreeView nodeLabel={this.state.project}>
       {this.state.treeFiles.map(createTreeViewIter)}
     </TreeView>;
+  }
+
+  currentCommit() {
+    return _find(this.state.commits, c => c.sha === this.state.commit);
+  }
+
+  prevCommit() {
+    const i = _findIndex(this.state.commits, c => c === this.currentCommit());
+    return i > 0 ? this.state.commits[i -1] : null;
+  }
+
+  nextCommit() {
+    const i = _findIndex(this.state.commits, c => c === this.currentCommit());
+    return i < this.state.commits.length - 1 ? this.state.commits[i + 1] : null;
   }
 }

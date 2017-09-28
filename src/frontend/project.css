@@ -1,3 +1,23 @@
+.container {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+}
+
+.body {
+  flex: 1;
+}
+
+.footer {
+  line-height: 40px;
+  display: flex;
+  justify-content: space-between;
+  background: white;
+  z-index: 1;
+  padding: 0 20px;
+  border-top: thin solid #cacaca;
+}
+
 .tabList {
   margin: 0;
 }
