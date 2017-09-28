@@ -57,7 +57,11 @@ export default class Project extends React.Component {
               </TabList>
 
               {this.state.contentFiles.map(f => <TabPanel key={f.name}>
-                <SyntaxHighlighter language='python' style={tomorrow}>
+                <SyntaxHighlighter language='python'
+                                   style={tomorrow}
+                                   className={styles.code}
+                                   showLineNumbers={true}
+                                   lineWrap={true}>
                   {f.content}
                 </SyntaxHighlighter>
               </TabPanel>)}

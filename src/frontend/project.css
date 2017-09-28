@@ -39,3 +39,7 @@
 .teachingNotesViewer {
   composes: viewer;
 }
+
+.code {
+  font-size: smaller;
+}
