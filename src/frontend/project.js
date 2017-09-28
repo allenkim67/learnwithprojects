@@ -54,7 +54,7 @@ export default class Project extends React.Component {
         <SplitPane split="vertical" minSize={500} defaultSize="50%">
           <div className={styles.fileViewer}>
             <Tabs>
-              <TabList>
+              <TabList className={"react-tabs__tab-list " + styles.tabList}>
                 {this.state.contentFiles.map(f => <Tab key={f.name}>
                   <span className={styles[f.status]}>{f.name}</span>
                 </Tab>)}
