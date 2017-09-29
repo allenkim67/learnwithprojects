@@ -7,6 +7,14 @@ import fileStyles from '../../../shared.css'
 import sidebarStyles from '../sidebar.css'
 
 export default class ProjectFiles extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      dirCollapsed: {}
+    };
+  }
+
   render() {
     return (
       <div className={sidebarStyles.container}>
@@ -17,36 +25,43 @@ export default class ProjectFiles extends React.Component {
     );
   }
 
-  createTreeView(treeFiles) {
-    const createTreeViewIter = file => {
-      if (file.type === 'file') {
-        return (
-          <div key={file.name} onClick={this.props.selectFile.bind(this, file)}>
-            <GoFileCode className={styles.icon}/>
-            <span className={"tree-view_item " + fileStyles[file.status]}>
-              {file.name}
-            </span>
-          </div>
-        )
-      } else {
-        const dirLabel = <span>
+  createTreeView(entry) {
+    if (entry.type === 'directory') {
+      const dirLabel = (
+        <span className={styles.treeviewItem}
+              onClick={this.toggleCollapse.bind(this, entry.name)}>
           <GoFileDirectory className={styles.icon}/>
-          {file.name}
-        </span>;
-
-        return <TreeView key={file.name} nodeLabel={dirLabel}>
-          {file.children.map(createTreeViewIter)}
+          {entry.name}
+        </span>
+      );
+      return (
+        <TreeView key={entry.name}
+                  nodeLabel={dirLabel}
+                  collapsed={this.state.dirCollapsed[entry.name]}
+                  onClick={this.toggleCollapse.bind(this, entry.name)}>
+          {entry.children.map(this.createTreeView.bind(this))}
         </TreeView>
-      }
-    };
+      );
+    } else {
+      return (
+        <div key={entry.name}
+             onClick={this.props.selectFile.bind(this, entry)}
+             className={styles.treeviewItem}>
+          <GoFileCode className={styles.icon}/>
+          <span className={"tree-view_item " + fileStyles[entry.status]}>
+            {entry.name}
+          </span>
+        </div>
+      );
+    }
+  }
 
-    const projectLabel = <span>
-      <GoFileDirectory className={styles.icon}/>
-      {this.props.project}
-    </span>;
-
-    return <TreeView nodeLabel={projectLabel}>
-      {treeFiles.map(createTreeViewIter)}
-    </TreeView>;
+  toggleCollapse(name) {
+    const newDirCollapsed = Object.assign(
+      {},
+      this.state.dirCollapsed,
+      {[name]: !this.state.dirCollapsed[name]}
+    );
+    this.setState({dirCollapsed: newDirCollapsed});
   }
 }

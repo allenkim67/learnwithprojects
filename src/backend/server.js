@@ -32,7 +32,7 @@ app.get('/:project/:commit?', async (req, res) => {
   const templateVars = {
     commits: commits.map(c => ({message: c.message(), sha: c.sha()})),
     commit: commit.sha(),
-    treeFiles,
+    treeFiles: {name: req.params.project, type: 'directory', children: treeFiles},
     contentFiles,
     project: req.params.project,
     teachingNotes: await git.getTeachingNotes(commit)

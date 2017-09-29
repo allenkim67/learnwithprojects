@@ -27,3 +27,11 @@ pre {
 .tree-view_item {
   line-height: 23px;
 }
+
+.tree-view_arrow {
+  -moz-transition: all 0.1s;
+  -o-transition: all 0.1s;
+  -ms-transition: all 0.1s;
+  -webkit-transition: all 0.1s;
+  transition: all 0.1s;
+}
