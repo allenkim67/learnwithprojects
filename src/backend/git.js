@@ -36,7 +36,7 @@ async function getTreeFiles(tree, diffs) {
   const entries = _.sortBy(tree.entries(), e => -e.isDirectory());
   const treeFiles = await _mapEntries(
     entries,
-    parent => ({name: parent.name(), type: 'directory'}),
+    parent => ({name: parent.name(), path: parent.path(), type: 'directory'}),
     async leaf => {
       if (_.includes(['.gitignore', '_teaching_notes.md'], leaf.name())) return null;
 
@@ -44,7 +44,7 @@ async function getTreeFiles(tree, diffs) {
       const newFile = edited && edited.newFile;
       const status = newFile ? 'newFile' : edited ? 'editedFile' : 'uneditedFile';
 
-      const file = {name: leaf.name(), type: 'file', status};
+      const file = {name: leaf.name(), path: leaf.path(), type: 'file', status};
 
       if (edited) {
         contentFiles.push({...file, content: (await leaf.getBlob()).toString()});
@@ -75,31 +75,30 @@ async function _mapEntries(entries, handleParent, handleLeaf) {
   return _.compact(await Promise.all(mappedEntries));
 }
 
-async function getFileById(project, commitId, name) {
+async function getFileByPath(project, commitId, path) {
   const repo = await getRepo(project);
   const commit = await repo.getCommit(commitId);
   const tree = await commit.getTree();
-  const entry = await treeSearch(tree, name);
+  const entry = await treeSearch(tree, path);
   return {
     name: entry.name(),
+    path: entry.path(),
     type: 'file',
     status: 'unedited',
     content: (await entry.getBlob()).toString()
   }
 }
 
-async function treeSearch(tree, name) {
-  const entries = tree.entries();
-  for (let i = 0; i < entries.length; i++) {
-    const e = entries[i];
-    if (e.isFile() && e.name() === name) {
-      return e;
-    } else if (e.isDirectory()) {
-      const subtreeResult = await treeSearch(await e.getTree(), name);
-      if (subtreeResult) return subtreeResult;
-    }
+async function treeSearch(tree, path) {
+  const pathnames = path.split('/');
+  let entries = tree.entries();
+  let entry;
+  for (let i = 0; i < pathnames.length; i++) {
+    entry = _.find(entries, e => e.name() === pathnames[i]);
+    if (!entry) return null;
+    if (entry.isFile()) return entry;
+    entries = (await entry.getTree()).entries();
   }
-  return null;
 }
 
 async function getTeachingNotes(commit) {
@@ -112,4 +111,4 @@ async function getTeachingNotes(commit) {
   }
 }
 
-module.exports = {getCommits, getFiles, getDiff, getFileById, getTeachingNotes};
+module.exports = {getCommits, getFiles, getDiff, getFileByPath, getTeachingNotes};

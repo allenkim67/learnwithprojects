@@ -25,7 +25,7 @@ export default class Project extends React.Component {
   }
 
   async fetchData(project, commit) {
-    const url = `/api/${project}/${commit}`;
+    const url = `/api/${project}/${commit || ''}`;
     const data = (await axios.get(url)).data;
 
     this.setState(Object.assign({}, this.state, data, this.newContentFiles(data)));
@@ -84,12 +84,12 @@ export default class Project extends React.Component {
   }
 
   async selectFile(file) {
-    const idx = _findIndex(this.state.contentFiles, f => f.name === file.name);
+    const idx = _findIndex(this.state.contentFiles, f => f.path === file.path);
 
     if (idx > -1) {
       this.setState({fileTabIndex: idx});
     } else {
-      const url = `/api/${this.state.project}/${this.state.commit}/${file.name}`;
+      const url = `/api/${this.state.project}/${this.state.commit}/${file.path}`;
       const newFile = (await axios.get(url)).data;
       this.setState({
         contentFiles: [...this.state.contentFiles, newFile],

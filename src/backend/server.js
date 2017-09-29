@@ -18,11 +18,7 @@ app.get('/', async (req, res) => {
   res.render('projects', {projects});
 });
 
-app.get('/:project/:commit?', async (req, res) => {
-  res.render('project');
-});
-
-app.get('/api/:project/:commit', async (req, res) => {
+app.get('/api/:project/:commit?', async (req, res) => {
   const commits = _.reverse(
     await git.getCommits(req.params.project)
   );
@@ -43,10 +39,14 @@ app.get('/api/:project/:commit', async (req, res) => {
   });
 });
 
-app.get('/api/:project/:commit/:fileId', async (req, res) => {
-  const {project, commit, fileId} = req.params;
-  const file = await git.getFileById(project, commit, fileId);
+app.get('/api/:project/:commit/:path(*)', async (req, res) => {
+  const {project, commit, path} = req.params;
+  const file = await git.getFileByPath(project, commit, path);
   res.json(file);
+});
+
+app.get('/:project/:commit?', async (req, res) => {
+  res.render('project');
 });
 
 module.exports = app;

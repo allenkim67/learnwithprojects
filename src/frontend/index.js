@@ -7,7 +7,7 @@ import { BrowserRouter, Route } from 'react-router-dom'
 import Project from './project/project'
 
 const app = <BrowserRouter>
-  <Route path="/:project/:commit" component={Project}/>
+  <Route path="/:project/:commit?" component={Project}/>
 </BrowserRouter>;
 
 ReactDOM.render(app, document.getElementById('root'));
