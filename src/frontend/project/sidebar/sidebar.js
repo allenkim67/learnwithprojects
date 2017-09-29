@@ -12,20 +12,20 @@ export default class Sidebar extends React.Component {
       <div>
         <Tabs>
           <TabList className={"react-tabs__tab-list " + styles.tabList}>
-            <Tab>Commits</Tab>
             <Tab>Project</Tab>
+            <Tab>Commits</Tab>
           </TabList>
-
-          <TabPanel>
-            <Commits commits={this.props.commits}
-                     project={this.props.project}
-                     currentCommit={this.props.currentCommit}/>
-          </TabPanel>
 
           <TabPanel>
             <ProjectFiles treeFiles={this.props.treeFiles}
                           selectFile={this.props.selectFile}
                           project={this.props.project}/>
+          </TabPanel>
+
+          <TabPanel>
+            <Commits commits={this.props.commits}
+                     project={this.props.project}
+                     currentCommit={this.props.currentCommit}/>
           </TabPanel>
         </Tabs>
       </div>

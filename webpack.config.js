@@ -8,8 +8,7 @@ module.exports = {
   },
   module: {
     rules: [
-      { test: /\.js$/, use: 'babel-loader', exclude: /node_modules/ },
-      { test: /\.jsx$/, use: 'babel-loader', exclude: /node_modules/ },
+      { test: /\.js$/, use: 'babel-loader', include: /frontend|react-icons/ },
       {
         test: /\.css$/,
         exclude: /(node_modules|global)/,
