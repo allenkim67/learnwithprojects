@@ -3,6 +3,11 @@ import 'normalize.css'
 import './global.css'
 import React from 'react'
 import ReactDOM from 'react-dom'
+import { BrowserRouter, Route } from 'react-router-dom'
 import Project from './project/project'
 
-ReactDOM.render(<Project/>, document.getElementById('root'));
+const app = <BrowserRouter>
+  <Route path="/:project/:commit" component={Project}/>
+</BrowserRouter>;
+
+ReactDOM.render(app, document.getElementById('root'));

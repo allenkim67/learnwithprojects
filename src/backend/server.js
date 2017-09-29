@@ -19,6 +19,10 @@ app.get('/', async (req, res) => {
 });
 
 app.get('/:project/:commit?', async (req, res) => {
+  res.render('project');
+});
+
+app.get('/api/:project/:commit', async (req, res) => {
   const commits = _.reverse(
     await git.getCommits(req.params.project)
   );
@@ -29,19 +33,17 @@ app.get('/:project/:commit?', async (req, res) => {
 
   const {treeFiles, contentFiles} = await git.getFiles(commit);
 
-  const templateVars = {
+  res.json({
     commits: commits.map(c => ({message: c.message(), sha: c.sha()})),
     commit: commit.sha(),
     treeFiles: {name: req.params.project, type: 'directory', children: treeFiles},
     contentFiles,
     project: req.params.project,
     teachingNotes: await git.getTeachingNotes(commit)
-  };
-
-  res.render('project', {data: templateVars});
+  });
 });
 
-app.get('/:project/:commit/:fileId', async (req, res) => {
+app.get('/api/:project/:commit/:fileId', async (req, res) => {
   const {project, commit, fileId} = req.params;
   const file = await git.getFileById(project, commit, fileId);
   res.json(file);

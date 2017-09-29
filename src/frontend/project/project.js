@@ -2,6 +2,7 @@ import React from 'react'
 import axios from 'axios'
 import _find from 'lodash/find'
 import _findIndex from 'lodash/findIndex'
+import _sortBy from 'lodash/sortBy'
 import SplitPane from 'react-split-pane'
 import styles from './project.css'
 
@@ -13,8 +14,46 @@ import Banner from './banner/banner'
 export default class Project extends React.Component {
   constructor(props) {
     super(props);
-    // initialize state from server-side seeded data
-    this.state = Object.assign({}, DATA, {fileTabIndex: 0});
+    this.state = {
+      fileTabIndex: 0,
+      treeFiles: {},
+      commits: [],
+      commit: {},
+      contentFiles: [],
+      teachingNotes: ''
+    };
+  }
+
+  async fetchData(project, commit) {
+    const url = `/api/${project}/${commit}`;
+    const data = (await axios.get(url)).data;
+
+    this.setState(Object.assign({}, this.state, data, this.newContentFiles(data)));
+  }
+
+  newContentFiles(newData) {
+    const oldFiles = this.state.contentFiles;
+    const newFiles = newData.contentFiles;
+
+    const updatedOldFiles = oldFiles
+      .map(oldf => {
+        return _find(newFiles, newf => newf.name === oldf.name) || Object.assign({}, oldf, {status: 'unedited'});
+      })
+      .filter(updatedOldf => {
+
+      });
+    const newNewFiles = newFiles.filter(newf => {
+      return !_find(oldFiles, oldf => newf.name === oldf.name);
+    });
+    return updatedOldFiles.concat(_sortBy(newNewFiles, newf => newf.name));
+  }
+
+  componentWillMount() {
+    this.fetchData(this.props.match.params.project, this.props.match.params.commit);
+  }
+
+  componentWillReceiveProps(newProps) {
+    this.fetchData(newProps.match.params.project, newProps.match.params.commit);
   }
 
   render() {
@@ -35,7 +74,7 @@ export default class Project extends React.Component {
           </SplitPane>
         </div>
         <div className={styles.footer}>
-          <Banner currentCommitMessage={this.currentCommit().message}
+          <Banner currentCommitMessage={this.currentCommit() ? this.currentCommit().message : ''}
                   prevCommit={this.prevCommit()}
                   nextCommit={this.nextCommit()}
                   project={this.state.project}/>
@@ -50,7 +89,7 @@ export default class Project extends React.Component {
     if (idx > -1) {
       this.setState({fileTabIndex: idx});
     } else {
-      const url = `/${this.state.project}/${this.state.commit}/${file.name}`;
+      const url = `/api/${this.state.project}/${this.state.commit}/${file.name}`;
       const newFile = (await axios.get(url)).data;
       this.setState({
         contentFiles: [...this.state.contentFiles, newFile],
