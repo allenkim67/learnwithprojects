@@ -13,8 +13,15 @@ pre {
 
 .Resizer {
   width: 1px;
+  border: 1px solid white;
   background: #cacaca;
   cursor: col-resize;
+}
+
+.Resizer:hover {
+  width: 1px;
+  background: white;
+  border-right: 2px dashed #5d5d5d;
 }
 
 .tree-view_item {
