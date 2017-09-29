@@ -75,17 +75,31 @@ async function _mapEntries(entries, handleParent, handleLeaf) {
   return _.compact(await Promise.all(mappedEntries));
 }
 
-async function getFileById(project, commitId, filePath) {
+async function getFileById(project, commitId, name) {
   const repo = await getRepo(project);
   const commit = await repo.getCommit(commitId);
   const tree = await commit.getTree();
-  const entry = tree.entryByName(filePath);
+  const entry = await treeSearch(tree, name);
   return {
-    name: entry.path(),
+    name: entry.name(),
     type: 'file',
     status: 'unedited',
     content: (await entry.getBlob()).toString()
   }
+}
+
+async function treeSearch(tree, name) {
+  const entries = tree.entries();
+  for (let i = 0; i < entries.length; i++) {
+    const e = entries[i];
+    if (e.isFile() && e.name() === name) {
+      return e;
+    } else if (e.isDirectory()) {
+      const subtreeResult = await treeSearch(await e.getTree(), name);
+      if (subtreeResult) return subtreeResult;
+    }
+  }
+  return null;
 }
 
 async function getTeachingNotes(commit) {
