@@ -2,7 +2,7 @@
   line-height: 40px;
   display: flex;
   justify-content: space-between;
-  background: white;
+  background: #f9f9f9;
   padding: 0 20px;
   border-top: thin solid #cacaca;
 }
