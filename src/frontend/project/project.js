@@ -37,7 +37,8 @@ export default class Project extends React.Component {
         <div className={styles.footer}>
           <Banner currentCommitMessage={this.currentCommit().message}
                   prevCommit={this.prevCommit()}
-                  nextCommit={this.nextCommit()}/>
+                  nextCommit={this.nextCommit()}
+                  project={this.state.project}/>
         </div>
       </div>
     );
