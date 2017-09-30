@@ -2,36 +2,16 @@ const path = require('path');
 const _ = require('lodash');
 const nodegit = require('nodegit');
 
-function getRepo(project) {
-  const projectPath = path.resolve(__dirname, '../../repos', project);
-  return nodegit.Repository.open(projectPath);
-}
-
 async function getCommits(project) {
-  const repo = await getRepo(project);
+  const repo = await _getRepo(project);
   const walker = repo.createRevWalk();
   walker.pushHead();
   return await walker.getCommitsUntil(c => true);
 }
 
-async function getDiff(commit) {
-  const diffs = await commit.getDiff();
-  const patches = await diffs[0].patches();
-  //const hunks = await Promise.all(patches.map(patch => patch.hunks()));
-  //const lines = await Promise.all(hunks.map(hunk => hunk[0].lines()));
-  return patches.map(p => ({
-    filePath: p.newFile().path(),
-    newFile: p.status() == 1
-  }))
-}
-
 async function getFiles(commit) {
   const tree = await commit.getTree();
-  const diffs = await getDiff(commit);
-  return getTreeFiles(tree, diffs);
-}
-
-async function getTreeFiles(tree, diffs) {
+  const diffs = await _getDiff(commit);
   const contentFiles = [];
   const entries = _.sortBy(tree.entries(), e => -e.isDirectory());
   const treeFiles = await _mapEntries(
@@ -56,6 +36,47 @@ async function getTreeFiles(tree, diffs) {
   return {contentFiles, treeFiles}
 }
 
+async function getFileByPath(project, commitId, path) {
+  const repo = await getRepo(project);
+  const commit = await repo.getCommit(commitId);
+  const tree = await commit.getTree();
+  const entry = await _treeSearch(tree, path);
+  return {
+    name: entry.name(),
+    path: entry.path(),
+    type: 'file',
+    status: 'unedited',
+    content: (await entry.getBlob()).toString()
+  }
+}
+
+async function getTeachingNotes(commit) {
+  const tree = await commit.getTree();
+  try {
+    const entry = tree.entryByName('_teaching_notes.md');
+    return (await entry.getBlob()).toString();
+  } catch (e) {
+    return '';
+  }
+}
+
+function _getRepo(project) {
+  const projectPath = path.resolve(__dirname, '../../repos', project);
+  return nodegit.Repository.open(projectPath);
+}
+
+async function _getDiff(commit) {
+  const diffs = await commit.getDiff();
+  const patches = await diffs[0].patches();
+  //const hunks = await Promise.all(patches.map(patch => patch.hunks()));
+  //const lines = await Promise.all(hunks.map(hunk => hunk[0].lines()));
+  return patches.map(p => ({
+    filePath: p.newFile().path(),
+    newFile: p.status() == 1
+  }))
+}
+
+
 async function _mapEntries(entries, handleParent, handleLeaf) {
   const mappedEntries = entries.map(async e => {
     if (e.isDirectory()) {
@@ -75,21 +96,7 @@ async function _mapEntries(entries, handleParent, handleLeaf) {
   return _.compact(await Promise.all(mappedEntries));
 }
 
-async function getFileByPath(project, commitId, path) {
-  const repo = await getRepo(project);
-  const commit = await repo.getCommit(commitId);
-  const tree = await commit.getTree();
-  const entry = await treeSearch(tree, path);
-  return {
-    name: entry.name(),
-    path: entry.path(),
-    type: 'file',
-    status: 'unedited',
-    content: (await entry.getBlob()).toString()
-  }
-}
-
-async function treeSearch(tree, path) {
+async function _treeSearch(tree, path) {
   const pathnames = path.split('/');
   let entries = tree.entries();
   let entry;
@@ -101,14 +108,4 @@ async function treeSearch(tree, path) {
   }
 }
 
-async function getTeachingNotes(commit) {
-  const tree = await commit.getTree();
-  try {
-    const entry = tree.entryByName('_teaching_notes.md');
-    return (await entry.getBlob()).toString();
-  } catch (e) {
-    return '';
-  }
-}
-
-module.exports = {getCommits, getFiles, getDiff, getFileByPath, getTeachingNotes};
+module.exports = {getCommits, getFiles, getFileByPath, getTeachingNotes};
