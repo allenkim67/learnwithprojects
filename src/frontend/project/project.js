@@ -19,7 +19,7 @@ export default class Project extends React.Component {
       fileTabIndex: 0,
       treeFiles: {},
       commits: [],
-      commit: {},
+      commit: '',
       contentFiles: [],
       teachingNotes: ''
     };
@@ -81,6 +81,7 @@ export default class Project extends React.Component {
         <div className={styles.body}>
           <SplitPane split="vertical" minSize={200} defaultSize={250}>
             <Sidebar commits={this.state.commits}
+                     currentCommit={this.state.commit}
                      treeFiles={this.state.treeFiles}
                      selectFile={this.selectFile.bind(this)}
                      project={this.state.project}/>

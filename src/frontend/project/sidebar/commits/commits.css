@@ -14,7 +14,7 @@
 
 .activeCommitTitle {
   composes: commitTitle;
-  font-weight: bold;
+  background: #e8f6ff;
 }
 
 .unactiveCommitTitle {
