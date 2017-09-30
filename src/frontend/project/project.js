@@ -29,7 +29,10 @@ export default class Project extends React.Component {
     const url = `/api/${project}/${commit || ''}`;
     const data = (await axios.get(url)).data;
 
-    this.setState(Object.assign({}, this.state, data, this.newContentFiles(data)));
+    this.setState({
+      ...data,
+      ...this.newContentFiles(data)
+    });
   }
 
   newContentFiles(newData) {
@@ -40,7 +43,7 @@ export default class Project extends React.Component {
     const filteredOldFiles = oldFiles.filter(this.treeSearch.bind(this, newData.treeFiles.children));
 
     const updatedOldFiles = filteredOldFiles.map(oldf => {
-      return _find(newFiles, newf => newf.path === oldf.path) || Object.assign({}, oldf, {status: 'unedited'});
+      return _find(newFiles, newf => newf.path === oldf.path) || {...oldf, status: 'unedited'};
     });
 
     const newNewFiles = newFiles.filter(newf => {

@@ -57,11 +57,10 @@ export default class ProjectFiles extends React.Component {
   }
 
   toggleCollapse(name) {
-    const newDirCollapsed = Object.assign(
-      {},
-      this.state.dirCollapsed,
-      {[name]: !this.state.dirCollapsed[name]}
-    );
+    const newDirCollapsed = {
+      ...this.state.dirCollapsed,
+      [name]: !this.state.dirCollapsed[name]
+    };
     this.setState({dirCollapsed: newDirCollapsed});
   }
 }
