@@ -3,6 +3,7 @@ import axios from 'axios'
 import _find from 'lodash/find'
 import _findIndex from 'lodash/findIndex'
 import _sortBy from 'lodash/sortBy'
+import _includes from 'lodash/includes'
 import SplitPane from 'react-split-pane'
 import styles from './project.css'
 
@@ -34,18 +35,36 @@ export default class Project extends React.Component {
   newContentFiles(newData) {
     const oldFiles = this.state.contentFiles;
     const newFiles = newData.contentFiles;
+    const selected = this.state.contentFiles[this.state.fileTabIndex];
 
-    const updatedOldFiles = oldFiles
-      .map(oldf => {
-        return _find(newFiles, newf => newf.name === oldf.name) || Object.assign({}, oldf, {status: 'unedited'});
-      })
-      .filter(updatedOldf => {
+    const filteredOldFiles = oldFiles.filter(this.treeSearch.bind(this, newData.treeFiles.children));
 
-      });
-    const newNewFiles = newFiles.filter(newf => {
-      return !_find(oldFiles, oldf => newf.name === oldf.name);
+    const updatedOldFiles = filteredOldFiles.map(oldf => {
+      return _find(newFiles, newf => newf.path === oldf.path) || Object.assign({}, oldf, {status: 'unedited'});
     });
-    return updatedOldFiles.concat(_sortBy(newNewFiles, newf => newf.name));
+
+    const newNewFiles = newFiles.filter(newf => {
+      return !_find(oldFiles, oldf => newf.path === oldf.path);
+    });
+
+    return {
+      contentFiles: updatedOldFiles.concat(_sortBy(newNewFiles, 'name')),
+      fileTabIndex: _includes(filteredOldFiles, selected) ? this.state.fileTabIndex : 0
+    };
+  }
+
+  treeSearch(entries, file) {
+    for (let i = 0; i < entries.length; i++) {
+      const entry = entries[i];
+
+      if (entry.path === file.path) return entry;
+
+      if (entry.children) {
+        const subsearchResult = this.treeSearch(entry.children, file);
+        if (subsearchResult) return subsearchResult;
+      }
+    }
+    return null;
   }
 
   componentWillMount() {
