@@ -47,7 +47,7 @@ function _formatEntry(node, diffs, project) {
 }
 
 function _getStatus(node, diffs) {
-  const edited = _.find(diffs, d => d.filePath === node.entry.path());
+  const edited = diffs[node.entry.path()];
   const newFile = edited && edited.newFile;
   return newFile ? 'newFile' : edited ? 'editedFile' : 'uneditedFile';
 }
@@ -86,10 +86,12 @@ async function _getDiff(commit) {
   const patches = await diffs[0].patches();
   //const hunks = await Promise.all(patches.map(patch => patch.hunks()));
   //const lines = await Promise.all(hunks.map(hunk => hunk[0].lines()));
-  return patches.map(p => ({
-    filePath: p.newFile().path(),
-    newFile: p.status() == 1
-  }))
+  return patches.reduce((acc, p) => {
+    return {
+      ...acc,
+      [p.newFile().path()]: {newFile: p.status() == 1}
+    };
+  }, {})
 }
 
 async function _entryTree(entry) {
