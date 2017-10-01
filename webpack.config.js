@@ -30,5 +30,6 @@ module.exports = {
   watchOptions: {
     poll: true,
     aggregateTimeout: 100
-  }
+  },
+  devtool: 'cheap-module-eval-source-map'
 };
