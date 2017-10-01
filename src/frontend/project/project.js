@@ -36,38 +36,13 @@ export default class Project extends React.Component {
   }
 
   newContentFiles(newData) {
-    const oldFiles = this.state.contentFiles;
-    const newFiles = newData.contentFiles;
     const selected = this.state.contentFiles[this.state.fileTabIndex];
-
-    const filteredOldFiles = oldFiles.filter(this.treeSearch.bind(this, newData.treeFiles.children));
-
-    const updatedOldFiles = filteredOldFiles.map(oldf => {
-      return _find(newFiles, newf => newf.path === oldf.path) || {...oldf, status: 'unedited'};
-    });
-
-    const newNewFiles = newFiles.filter(newf => {
-      return !_find(oldFiles, oldf => newf.path === oldf.path);
-    });
-
+    const contentFiles = _sortBy(newData.contentFiles, 'name');
+    const fileTabIndex = selected ? _findIndex(contentFiles, f => f.path === selected.path) : 0;
     return {
-      contentFiles: updatedOldFiles.concat(_sortBy(newNewFiles, 'name')),
-      fileTabIndex: _includes(filteredOldFiles, selected) ? this.state.fileTabIndex : 0
+      contentFiles,
+      fileTabIndex: fileTabIndex > -1 ? fileTabIndex : 0
     };
-  }
-
-  treeSearch(entries, file) {
-    for (let i = 0; i < entries.length; i++) {
-      const entry = entries[i];
-
-      if (entry.path === file.path) return entry;
-
-      if (entry.children) {
-        const subsearchResult = this.treeSearch(entry.children, file);
-        if (subsearchResult) return subsearchResult;
-      }
-    }
-    return null;
   }
 
   componentWillMount() {

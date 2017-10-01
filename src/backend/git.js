@@ -1,6 +1,7 @@
 const path = require('path');
 const _ = require('lodash');
 const nodegit = require('nodegit');
+const treeUtil = require('../shared/tree-util');
 
 async function getCommits(project) {
   const repo = await _getRepo(project);
@@ -9,44 +10,59 @@ async function getCommits(project) {
   return await walker.getCommitsUntil(c => true);
 }
 
-async function getFiles(commit) {
-  const tree = await commit.getTree();
+async function getFiles(project, commit) {
+  let tree = await _entryTree(await commit.getTree());
+  tree = treeUtil.prune(tree, node => {
+    return _.includes(['.gitignore', '_teaching_notes.md'], node.entry.name());
+  });
+
   const diffs = await _getDiff(commit);
-  const contentFiles = [];
-  const entries = _.sortBy(tree.entries(), e => -e.isDirectory());
-  const treeFiles = await _mapEntries(
-    entries,
-    parent => ({name: parent.name(), path: parent.path(), type: 'directory'}),
-    async leaf => {
-      if (_.includes(['.gitignore', '_teaching_notes.md'], leaf.name())) return null;
 
-      const edited = _.find(diffs, d => d.filePath === leaf.path());
-      const newFile = edited && edited.newFile;
-      const status = newFile ? 'newFile' : edited ? 'editedFile' : 'uneditedFile';
+  return {
+    treeFiles: treeUtil.map(tree, node => _formatEntry(node, diffs, project)),
+    contentFiles: await _getContentFiles(tree, diffs)
+  };
+}
 
-      const file = {name: leaf.name(), path: leaf.path(), type: 'file', status};
-
-      if (edited) {
-        contentFiles.push({...file, content: (await leaf.getBlob()).toString()});
-      }
-
-      return file;
-    }
+function _getContentFiles(tree, diffs) {
+  return Promise.all(treeUtil.leafOnly(tree)
+    .filter(node => _.includes(['newFile', 'editedFile'], _getStatus(node, diffs)))
+    .map(async node => {
+      return {
+        ..._formatEntry(node, diffs),
+        content: (await node.entry.getBlob()).toString()
+      };
+    })
   );
-  return {contentFiles, treeFiles}
+}
+
+function _formatEntry(node, diffs, project) {
+  const newNode = node.entry instanceof nodegit.Tree ?
+    {name: project, path: ''} :
+    {name: node.entry.name(), path: node.entry.path()};
+
+  return node.children ?
+    {...newNode, type: 'directory'} :
+    {...newNode, type: 'file', status: _getStatus(node, diffs)};
+}
+
+function _getStatus(node, diffs) {
+  const edited = _.find(diffs, d => d.filePath === node.entry.path());
+  const newFile = edited && edited.newFile;
+  return newFile ? 'newFile' : edited ? 'editedFile' : 'uneditedFile';
 }
 
 async function getFileByPath(project, commitId, path) {
-  const repo = await getRepo(project);
+  const repo = await _getRepo(project);
   const commit = await repo.getCommit(commitId);
-  const tree = await commit.getTree();
-  const entry = await _treeSearch(tree, path);
+  const diffs = await _getDiff(commit);
+  const tree = await _entryTree(await commit.getTree());
+  const node = await treeUtil.bfs(tree, node => {
+    return !node.children && node.entry.path() === path;
+  });
   return {
-    name: entry.name(),
-    path: entry.path(),
-    type: 'file',
-    status: 'unedited',
-    content: (await entry.getBlob()).toString()
+    ..._formatEntry(node, diffs, project),
+    content: (await node.entry.getBlob()).toString()
   }
 }
 
@@ -76,35 +92,15 @@ async function _getDiff(commit) {
   }))
 }
 
-
-async function _mapEntries(entries, handleParent, handleLeaf) {
-  const mappedEntries = entries.map(async e => {
-    if (e.isDirectory()) {
-      return {
-        ...handleParent(e),
-        children: await _mapEntries(
-          (await e.getTree()).entries(),
-          handleParent,
-          handleLeaf
-        )
-      }
-    } else {
-      return await handleLeaf(e);
+async function _entryTree(entry) {
+  if (entry instanceof nodegit.Tree || entry.isTree()) {
+    const tree = entry instanceof nodegit.Tree ? entry : await entry.getTree();
+    return {
+      entry,
+      children: await Promise.all(tree.entries().map(_entryTree))
     }
-  });
-
-  return _.compact(await Promise.all(mappedEntries));
-}
-
-async function _treeSearch(tree, path) {
-  const pathnames = path.split('/');
-  let entries = tree.entries();
-  let entry;
-  for (let i = 0; i < pathnames.length; i++) {
-    entry = _.find(entries, e => e.name() === pathnames[i]);
-    if (!entry) return null;
-    if (entry.isFile()) return entry;
-    entries = (await entry.getTree()).entries();
+  } else {
+    return {entry};
   }
 }
 

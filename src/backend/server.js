@@ -27,14 +27,14 @@ app.get('/api/:project/:commit?', async (req, res) => {
     _.find(commits, c => c.sha() == req.params.commit) :
     commits[0];
 
-  const {treeFiles, contentFiles} = await git.getFiles(commit);
+  const {treeFiles, contentFiles} = await git.getFiles(req.params.project, commit);
 
   res.json({
-    commits: commits.map(c => ({message: c.message(), sha: c.sha()})),
-    commit: commit.sha(),
-    treeFiles: {name: req.params.project, type: 'directory', children: treeFiles},
-    contentFiles,
     project: req.params.project,
+    commit: commit.sha(),
+    commits: commits.map(c => ({message: c.message(), sha: c.sha()})),
+    treeFiles: treeFiles,
+    contentFiles,
     teachingNotes: await git.getTeachingNotes(commit)
   });
 });
