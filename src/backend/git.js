@@ -17,7 +17,6 @@ async function getFiles(project, commit) {
   });
 
   const diffs = await _getDiff(commit);
-
   return {
     treeFiles: treeUtil.map(tree, node => _formatEntry(node, diffs, project)),
     contentFiles: await _getContentFiles(tree, diffs)
@@ -30,7 +29,8 @@ function _getContentFiles(tree, diffs) {
     .map(async node => {
       return {
         ..._formatEntry(node, diffs),
-        content: (await node.entry.getBlob()).toString()
+        content: (await node.entry.getBlob()).toString(),
+        diff: diffs[node.entry.path()]
       };
     })
   );
@@ -84,14 +84,55 @@ function _getRepo(project) {
 async function _getDiff(commit) {
   const diffs = await commit.getDiff();
   const patches = await diffs[0].patches();
-  //const hunks = await Promise.all(patches.map(patch => patch.hunks()));
-  //const lines = await Promise.all(hunks.map(hunk => hunk[0].lines()));
-  return patches.reduce((acc, p) => {
+
+  return patches.reduce(async (acc, p) => {
     return {
-      ...acc,
-      [p.newFile().path()]: {newFile: p.status() == 1}
+      ...(await acc),
+      [p.newFile().path()]: {
+        newFile: p.status() == 1,
+        diffs: await patchDiffs(p)
+      }
     };
-  }, {})
+  }, {});
+
+  async function patchDiffs(p) {
+    const hunks = await p.hunks();
+    const lines = _.flatten(
+      await Promise.all(
+        hunks.map(h => h.lines())
+      )
+    );
+    return groupLines(lines);
+  }
+
+  function groupLines(lines) {
+    const groups = lines
+      .reduce((acc, line, i) => {
+        const addedOrRemoved = _.includes([line.newLineno(), line.oldLineno()], -1);
+        const emptyArray = _.last(acc) && _.last(acc).length === 0;
+        if (!i || !emptyArray && !addedOrRemoved) acc.push([]);
+        if (addedOrRemoved) _.last(acc).push(line);
+        return acc;
+      }, [])
+      .filter(arr => arr.length !== 0);
+
+    return groups.map(g => {
+      const type = _.every(g, line => line.newLineno() === -1) ?
+        'remove' :
+        _.every(g, line => line.oldLineno() === -1) ?
+          'add':
+          'change';
+
+      const [removedLines, addedLines] = _.partition(g, l => l.newLineno() === -1);
+
+      return {
+        start: addedLines[0].newLineno(),
+        end: _.last(addedLines).newLineno(),
+        type,
+        oldContent: removedLines.reduce((content, line) => content + line.content(), '')
+      };
+    });
+  }
 }
 
 async function _entryTree(entry) {
