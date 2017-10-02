@@ -3,8 +3,8 @@ import 'react-tabs/style/react-tabs.css'
 
 import React from 'react'
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs'
-import SyntaxHighlighter from 'react-syntax-highlighter'
-import tomorrow from 'react-syntax-highlighter/dist/styles/tomorrow-night'
+import SyntaxHighlighter from '@allenkim67/react-syntax-highlighter'
+import tomorrow from '@allenkim67/react-syntax-highlighter/dist/styles/tomorrow-night'
 import styles from './fileview.css'
 import sharedStyles from '../../shared.css'
 
@@ -23,12 +23,35 @@ export default class FileView extends React.Component {
             <SyntaxHighlighter language='python'
                                style={tomorrow}
                                className={styles.code}
-                               showLineNumbers={true}>
+                               showLineNumbers={true}
+                               lineNumberContainerStyle={this.lineStyle(f)}
+                               LineNumberWrapper={LineNumberWrapper(f)}>
               {f.content}
             </SyntaxHighlighter>
           </TabPanel>)}
         </Tabs>
       </div>
     );
+  }
+
+  lineStyle(f) {
+
+  }
+}
+
+function LineNumberWrapper(file) {
+  return class extends React.Component {
+    render() {
+      return (
+        <div onClick={this.clickHandler.bind(this, this.props.lineNumber)}>
+          {this.props.children}
+        </div>
+      )
+    }
+
+    clickHandler(lineNumber) {
+      console.log(lineNumber);
+      console.log(file);
+    }
   }
 }

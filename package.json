@@ -11,6 +11,7 @@
     "dev": "npm-run-all --parallel dev-server dev-build"
   },
   "dependencies": {
+    "@allenkim67/react-syntax-highlighter": "^5.7.0",
     "axios": "^0.16.2",
     "ejs": "^2.5.7",
     "express": "^4.15.4",
@@ -22,10 +23,10 @@
     "react-dom": "^15.6.1",
     "react-icons": "^2.2.5",
     "react-markdown": "^2.5.0",
+    "react-popover": "^0.4.18",
     "react-router": "^4.2.0",
     "react-router-dom": "^4.2.2",
     "react-split-pane": "^0.1.66",
-    "react-syntax-highlighter": "^5.7.0",
     "react-tabs": "^2.0.0",
     "react-treeview": "^0.4.7"
   },
@@ -47,7 +48,9 @@
       "env",
       "react"
     ],
-    "plugins": ["transform-object-rest-spread"]
+    "plugins": [
+      "transform-object-rest-spread"
+    ]
   },
   "nodemonConfig": {
     "ignore": [
