@@ -30,7 +30,7 @@ function _getContentFiles(tree, diffs) {
       return {
         ..._formatEntry(node, diffs),
         content: (await node.entry.getBlob()).toString(),
-        diff: diffs[node.entry.path()]
+        diff: diffs[node.entry.path()].diffs
       };
     })
   );
