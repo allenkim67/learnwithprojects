@@ -13,17 +13,14 @@ import TeachingNotes from './teaching-notes/teaching-notes'
 import Banner from './banner/banner'
 
 export default class Project extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      fileTabIndex: 0,
-      treeFiles: {},
-      commits: [],
-      commit: '',
-      contentFiles: [],
-      teachingNotes: ''
-    };
-  }
+  state = {
+    fileTabIndex: 0,
+    treeFiles: {},
+    commits: [],
+    commit: '',
+    contentFiles: [],
+    teachingNotes: ''
+  };
 
   async fetchData(project, commit) {
     const url = `/api/${project}/${commit || ''}`;

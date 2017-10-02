@@ -41,6 +41,10 @@ export default class FileView extends React.Component {
 
 function LineNumberWrapper(file) {
   return class extends React.Component {
+    state = {
+      isOpen: false
+    };
+
     render() {
       return (
         <div onClick={this.clickHandler.bind(this, this.props.lineNumber)}>

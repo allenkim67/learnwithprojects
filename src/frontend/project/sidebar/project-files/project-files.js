@@ -7,13 +7,9 @@ import fileStyles from '../../../shared.css'
 import sidebarStyles from '../sidebar.css'
 
 export default class ProjectFiles extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      dirCollapsed: {}
-    };
-  }
+  state = {
+    dirCollapsed: {}
+  };
 
   render() {
     return (
