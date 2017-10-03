@@ -24,7 +24,8 @@ export default class Project extends React.Component {
 
   async fetchData(project, commit) {
     const url = `/api/${project}/${commit || ''}`;
-    const data = (await axios.get(url)).data;
+    const params = {force: this.state.contentFiles.map(f => f.path)};
+    const data = (await axios.post(url, params)).data;
 
     this.setState({
       ...data,
@@ -34,7 +35,13 @@ export default class Project extends React.Component {
 
   newContentFiles(newData) {
     const selected = this.state.contentFiles[this.state.fileTabIndex];
-    const contentFiles = _sortBy(newData.contentFiles, 'name');
+    const contentFiles = _sortBy(newData.contentFiles, newf => {
+      const i = _findIndex(this.state.contentFiles, oldf => newf.name === oldf.name);
+      return [
+        i === -1 ? Infinity : i,
+        newf.name
+      ]
+    });
     const fileTabIndex = selected ? _findIndex(contentFiles, f => f.path === selected.path) : 0;
     return {
       contentFiles,

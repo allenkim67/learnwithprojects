@@ -10,27 +10,29 @@ async function getCommits(project) {
   return await walker.getCommitsUntil(c => true);
 }
 
-async function getFiles(project, commit) {
+async function getFiles(project, commit, force=[]) {
   let tree = await _entryTree(await commit.getTree());
   tree = treeUtil.prune(tree, node => {
     return _.includes(['.gitignore', '_teaching_notes.md'], node.entry.name());
   });
-
   const diffs = await _getDiff(commit);
+  const treeFiles = treeUtil.map(tree, node => _formatEntry(node, diffs, project));
+
   return {
-    treeFiles: treeUtil.map(tree, node => _formatEntry(node, diffs, project)),
-    contentFiles: await _getContentFiles(tree, diffs)
+    treeFiles,
+    contentFiles: await _getContentFiles(tree, diffs, force)
   };
 }
 
-function _getContentFiles(tree, diffs) {
+function _getContentFiles(tree, diffs, force=[]) {
   return Promise.all(treeUtil.leafOnly(tree)
-    .filter(node => _.includes(['newFile', 'editedFile'], _getStatus(node, diffs)))
+    .filter(node => _.includes(force, node.entry.path()) ||
+                    _.includes(['newFile', 'editedFile'], _getStatus(node, diffs)))
     .map(async node => {
       return {
         ..._formatEntry(node, diffs),
         content: (await node.entry.getBlob()).toString(),
-        diff: diffs[node.entry.path()].diffs
+        diff: diffs[node.entry.path()] ? diffs[node.entry.path()].diffs : null
       };
     })
   );
