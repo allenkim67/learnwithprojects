@@ -8,7 +8,7 @@ import SplitPane from 'react-split-pane'
 import styles from './project.css'
 
 import Sidebar from './sidebar/sidebar'
-import FileView from './fileview/fileview'
+import CodeView from './code-view/code-view'
 import TeachingNotes from './teaching-notes/teaching-notes'
 import Banner from './banner/banner'
 
@@ -61,7 +61,7 @@ export default class Project extends React.Component {
                      selectFile={this.selectFile.bind(this)}
                      project={this.state.project}/>
             <SplitPane split="vertical" minSize={500} defaultSize="60%">
-              <FileView contentFiles={this.state.contentFiles}
+              <CodeView contentFiles={this.state.contentFiles}
                         fileTabIndex={this.state.fileTabIndex}
                         setFileTabIndex={i => this.setState({fileTabIndex: i})}/>
               <TeachingNotes teachingNotes={this.state.teachingNotes}/>

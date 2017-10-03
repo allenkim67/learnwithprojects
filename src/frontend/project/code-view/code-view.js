@@ -6,10 +6,10 @@ import { Tab, Tabs, TabList, TabPanel } from 'react-tabs'
 import SyntaxHighlighter from '@allenkim67/react-syntax-highlighter'
 import tomorrow from '@allenkim67/react-syntax-highlighter/dist/styles/tomorrow-night'
 import Popover from 'react-popover'
-import styles from './fileview.css'
+import styles from './code-view.css'
 import sharedStyles from '../../shared.css'
 
-export default class FileView extends React.Component {
+export default class CodeView extends React.Component {
   render() {
     return (
       <div>
