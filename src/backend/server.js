@@ -22,11 +22,7 @@ app.get('/api/:project/:commit?', async (req, res) => {
   const commits = _.reverse(
     await git.getCommits(req.params.project)
   );
-
-  const commit = req.params.commit ?
-    _.find(commits, c => c.sha() == req.params.commit) :
-    commits[0];
-
+  const commit = _.find(commits, c => c.sha() == req.params.commit) || commits[0];
   const {treeFiles, contentFiles} = await git.getFiles(req.params.project, commit);
 
   res.json({
