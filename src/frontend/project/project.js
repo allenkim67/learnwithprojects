@@ -70,7 +70,8 @@ export default class Project extends React.Component {
             <SplitPane split="vertical" minSize={500} defaultSize="60%">
               <CodeView contentFiles={this.state.contentFiles}
                         fileTabIndex={this.state.fileTabIndex}
-                        setFileTabIndex={i => this.setState({fileTabIndex: i})}/>
+                        setFileTabIndex={i => this.setState({fileTabIndex: i})}
+                        closeFileTab={this.closeFileTab.bind(this)}/>
               <TeachingNotes teachingNotes={this.state.teachingNotes}/>
             </SplitPane>
           </SplitPane>
@@ -112,5 +113,11 @@ export default class Project extends React.Component {
   nextCommit() {
     const i = _findIndex(this.state.commits, c => c === this.currentCommit());
     return i < this.state.commits.length - 1 ? this.state.commits[i + 1] : null;
+  }
+
+  closeFileTab(closedFile, evt) {
+    const contentFiles = this.state.contentFiles.filter(f => f !== closedFile);
+    this.setState({contentFiles});
+    evt.stopPropagation();
   }
 }

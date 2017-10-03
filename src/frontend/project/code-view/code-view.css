@@ -3,3 +3,18 @@
   overflow: auto;
   height: calc(100vh - 86px);
 }
+
+.tab {
+  padding-right: 7px;
+  border-bottom: thin solid grey;
+}
+
+.closeIcon {
+  font-size: 14px;
+  padding-left: 4px;
+  color: grey;
+}
+
+.closeIcon:hover {
+  color: black;
+}

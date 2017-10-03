@@ -6,6 +6,7 @@ import { Tab, Tabs, TabList, TabPanel } from 'react-tabs'
 import SyntaxHighlighter from '@allenkim67/react-syntax-highlighter'
 import tomorrow from '@allenkim67/react-syntax-highlighter/dist/styles/tomorrow-night'
 import Popover from 'react-popover'
+import GoX from 'react-icons/go/x'
 import styles from './code-view.css'
 import sharedStyles from '../../shared.css'
 
@@ -15,8 +16,11 @@ export default class CodeView extends React.Component {
       <div>
         <Tabs selectedIndex={this.props.fileTabIndex} onSelect={this.props.setFileTabIndex}>
           <TabList className={"react-tabs__tab-list " + sharedStyles.tabList}>
-            {this.props.contentFiles.map(f => <Tab key={f.name}>
+            {this.props.contentFiles.map(f => <Tab key={f.name}
+                                                   className={"react-tabs__tab " + styles.tab}>
               <span className={sharedStyles[f.status]}>{f.name}</span>
+              <GoX onClick={this.props.closeFileTab.bind(this, f)}
+                   className={styles.closeIcon}/>
             </Tab>)}
           </TabList>
 
