@@ -125,9 +125,13 @@ async function _getDiff(commit) {
 
       const [removedLines, addedLines] = _.partition(g, l => l.newLineno() === -1);
 
+      const [start, end] = addedLines.length ?
+        [addedLines[0].newLineno(), _.last(addedLines).newLineno()] :
+        [removedLines[0].oldLineno(), removedLines[0].oldLineno()];
+
       return {
-        start: addedLines[0].newLineno(),
-        end: _.last(addedLines).newLineno(),
+        start,
+        end,
         type,
         oldContent: removedLines.reduce((content, line) => content + line.content(), '')
       };
