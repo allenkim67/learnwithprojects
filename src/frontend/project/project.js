@@ -67,7 +67,7 @@ export default class Project extends React.Component {
                      treeFiles={this.state.treeFiles}
                      selectFile={this.selectFile.bind(this)}
                      project={this.state.project}/>
-            <SplitPane split="vertical" minSize={500} defaultSize="60%">
+            <SplitPane split="vertical" minSize={500} defaultSize="55%">
               <CodeView contentFiles={this.state.contentFiles}
                         fileTabIndex={this.state.fileTabIndex}
                         setFileTabIndex={i => this.setState({fileTabIndex: i})}

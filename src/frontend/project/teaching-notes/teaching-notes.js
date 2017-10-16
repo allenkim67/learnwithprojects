@@ -6,7 +6,9 @@ export default class TeachingNotes extends React.Component {
   render() {
     return (
       <div className={styles.container}>
-        <Markdown source={this.props.teachingNotes}/>
+        <div className={styles.content}>
+          <Markdown source={this.props.teachingNotes}/>
+        </div>
       </div>
     );
   }
