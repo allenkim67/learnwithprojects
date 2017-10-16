@@ -6,13 +6,14 @@
   "license": "MIT",
   "scripts": {
     "start": "node index.js",
-    "dev-server": "nodemon index.js -L",
+    "dev-server": "nodemon index.js",
     "dev-build": "webpack -w",
     "dev": "npm-run-all --parallel dev-server dev-build"
   },
   "dependencies": {
     "@allenkim67/react-syntax-highlighter": "^5.7.0",
     "axios": "^0.16.2",
+    "body-parser": "^1.18.2",
     "ejs": "^2.5.7",
     "express": "^4.15.4",
     "express-async-errors": "^2.0.0",
