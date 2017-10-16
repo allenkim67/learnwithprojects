@@ -3,6 +3,7 @@ const fs = require('fs');
 const express = require('express');
 require('express-async-errors');
 const bodyParser = require('body-parser');
+const compression = require('compression');
 const _ = require('lodash');
 const git = require('./git');
 
@@ -11,6 +12,7 @@ const app = express();
 app.set('view engine', 'ejs');
 app.set('views', path.resolve(__dirname, './templates'));
 
+app.use(compression());
 app.use('/build', express.static(path.resolve(__dirname, '../../build')));
 app.use(bodyParser.json());
 

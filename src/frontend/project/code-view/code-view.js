@@ -3,12 +3,18 @@ import 'react-tabs/style/react-tabs.css'
 
 import React from 'react'
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs'
-import SyntaxHighlighter from '@allenkim67/react-syntax-highlighter'
-import tomorrow from '@allenkim67/react-syntax-highlighter/dist/styles/tomorrow-night'
 import Popover from 'react-popover'
 import GoX from 'react-icons/go/x'
 import styles from './code-view.css'
 import sharedStyles from '../../shared.css'
+
+import SyntaxHighlighter, { registerLanguage } from "@allenkim67/react-syntax-highlighter/dist/light"
+import js from '@allenkim67/react-syntax-highlighter/dist/languages/javascript';
+import python from '@allenkim67/react-syntax-highlighter/dist/languages/python';
+import tomorrow from '@allenkim67/react-syntax-highlighter/dist/styles/tomorrow-night'
+
+registerLanguage('javascript', js);
+registerLanguage('python', python);
 
 export default class CodeView extends React.Component {
   render() {

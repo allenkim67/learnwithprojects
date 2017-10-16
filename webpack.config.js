@@ -1,6 +1,26 @@
 const path = require('path');
+const merge = require('webpack-merge');
+const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
+const webpack = require('webpack');
 
-module.exports = {
+const envConfig = process.env.NODE_ENV === 'production' ? {
+  plugins: [
+    new UglifyJSPlugin(),
+    new webpack.DefinePlugin({
+      'process.env': {
+        NODE_ENV: JSON.stringify('production')
+      }
+    })
+  ]
+} : {
+  watchOptions: {
+    poll: true,
+    aggregateTimeout: 100
+  },
+  devtool: 'cheap-module-eval-source-map'
+};
+
+const sharedConfig = {
   entry: './src/frontend/index.js',
   output: {
     path: path.resolve('./build'),
@@ -26,10 +46,7 @@ module.exports = {
         ]
       }
     ]
-  },
-  watchOptions: {
-    poll: true,
-    aggregateTimeout: 100
-  },
-  devtool: 'cheap-module-eval-source-map'
+  }
 };
+
+module.exports = merge(sharedConfig, envConfig);
