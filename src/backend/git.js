@@ -3,8 +3,8 @@ const _ = require('lodash');
 const nodegit = require('nodegit');
 const treeUtil = require('../shared/tree-util');
 
-async function getCommits(project) {
-  const repo = await _getRepo(project);
+async function getCommits(project, lang) {
+  const repo = await _getRepo(project, lang);
   const walker = repo.createRevWalk();
   walker.pushHead();
   return await walker.getCommitsUntil(c => true);
@@ -54,8 +54,8 @@ function _getStatus(node, diffs) {
   return newFile ? 'newFile' : edited ? 'editedFile' : 'uneditedFile';
 }
 
-async function getFileByPath(project, commitId, path) {
-  const repo = await _getRepo(project);
+async function getFileByPath(project, lang, commitId, path) {
+  const repo = await _getRepo(project, lang);
   const commit = await repo.getCommit(commitId);
   const diffs = await _getDiff(commit);
   const tree = await _entryTree(await commit.getTree());
@@ -78,8 +78,8 @@ async function getTeachingNotes(commit) {
   }
 }
 
-function _getRepo(project) {
-  const projectPath = path.resolve(__dirname, '../../repos', project);
+function _getRepo(project, lang) {
+  const projectPath = path.resolve(__dirname, '../../repos', project, lang);
   return nodegit.Repository.open(projectPath);
 }
 

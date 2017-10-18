@@ -19,11 +19,13 @@ export default class Project extends React.Component {
     commits: [],
     commit: '',
     contentFiles: [],
-    teachingNotes: ''
+    teachingNotes: '',
+    project: '',
+    lang: ''
   };
 
-  async fetchData(project, commit) {
-    const url = `/api/${project}/${commit || ''}`;
+  async fetchData(project, lang, commit) {
+    const url = `/api/${project}/${lang}/${commit || ''}`;
     const params = {force: this.state.contentFiles.map(f => f.path)};
     const data = (await axios.post(url, params)).data;
 
@@ -50,11 +52,12 @@ export default class Project extends React.Component {
   }
 
   componentWillMount() {
-    this.fetchData(this.props.match.params.project, this.props.match.params.commit);
+    const params = this.props.match.params;
+    this.fetchData(params.project, params.lang, params.commit);
   }
 
   componentWillReceiveProps(newProps) {
-    this.fetchData(newProps.match.params.project, newProps.match.params.commit);
+    this.fetchData(this.state.project, this.state.lang, newProps.match.params.commit);
   }
 
   render() {
@@ -66,7 +69,8 @@ export default class Project extends React.Component {
                      currentCommit={this.state.commit}
                      treeFiles={this.state.treeFiles}
                      selectFile={this.selectFile.bind(this)}
-                     project={this.state.project}/>
+                     project={this.state.project}
+                     lang={this.state.lang}/>
             <SplitPane split="vertical" minSize={500} defaultSize="55%">
               <CodeView contentFiles={this.state.contentFiles}
                         fileTabIndex={this.state.fileTabIndex}
@@ -80,7 +84,8 @@ export default class Project extends React.Component {
           <Banner currentCommitMessage={this.currentCommit() ? this.currentCommit().message : ''}
                   prevCommit={this.prevCommit()}
                   nextCommit={this.nextCommit()}
-                  project={this.state.project}/>
+                  project={this.state.project}
+                  lang={this.state.lang}/>
         </div>
       </div>
     );
@@ -92,7 +97,7 @@ export default class Project extends React.Component {
     if (idx > -1) {
       this.setState({fileTabIndex: idx});
     } else {
-      const url = `/api/${this.state.project}/${this.state.commit}/${file.path}`;
+      const url = `/api/${this.state.project}/${this.state.lang}/${this.state.commit}/${file.path}`;
       const newFile = (await axios.get(url)).data;
       this.setState({
         contentFiles: [...this.state.contentFiles, newFile],

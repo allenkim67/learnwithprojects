@@ -8,7 +8,7 @@ export default class Banner extends React.Component {
       <div className={styles.banner}>
         <span>
           { this.props.prevCommit ?
-            <Link to={`/${this.props.project}/${this.props.prevCommit.sha}`}>&lt;&lt; previous</Link> :
+            <Link to={`/${this.props.project}/${this.props.lang}/${this.props.prevCommit.sha}`}>&lt;&lt; previous</Link> :
             null }
         </span>
         <span>
@@ -16,7 +16,7 @@ export default class Banner extends React.Component {
         </span>
         <span>
           { this.props.nextCommit ?
-            <Link to={`/${this.props.project}/${this.props.nextCommit.sha}`}>next &gt;&gt;</Link> :
+            <Link to={`/${this.props.project}/${this.props.lang}/${this.props.nextCommit.sha}`}>next &gt;&gt;</Link> :
             null }
         </span>
       </div>

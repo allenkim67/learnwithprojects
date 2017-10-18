@@ -19,12 +19,14 @@ export default class Sidebar extends React.Component {
           <TabPanel>
             <ProjectFiles treeFiles={this.props.treeFiles}
                           selectFile={this.props.selectFile}
-                          project={this.props.project}/>
+                          project={this.props.project}
+                          lang={this.props.lang}/>
           </TabPanel>
 
           <TabPanel>
             <Commits commits={this.props.commits}
                      project={this.props.project}
+                     lang={this.props.lang}
                      currentCommit={this.props.currentCommit}/>
           </TabPanel>
         </Tabs>

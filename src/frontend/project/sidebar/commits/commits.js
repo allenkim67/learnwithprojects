@@ -9,7 +9,7 @@ export default class Commits extends React.Component {
       <ul className={sharedStyles.container}>
         {this.props.commits.map(c => <li key={c.sha} className={styles.commit}>
           <Link className={c.sha === this.props.currentCommit ? styles.activeCommitTitle : styles.commitTitle}
-                to={`/${this.props.project}/${c.sha}`}>
+                to={`/${this.props.project}/${this.props.lang}/${c.sha}`}>
             {c.message}
           </Link>
         </li>)}
