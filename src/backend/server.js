@@ -1,5 +1,5 @@
 const path = require('path');
-const fs = require('fs');
+const fs = require('fs-extra');
 const express = require('express');
 require('express-async-errors');
 const bodyParser = require('body-parser');
@@ -23,7 +23,14 @@ app.use('/api', apiRouter);
 // ROUTES
 app.get('/', async (req, res) => {
   const projectPath = path.resolve(__dirname, '../../repos');
-  const projects = fs.readdirSync(projectPath);
+  const projectNames = await fs.readdir(projectPath);
+  const projects = await Promise.all(projectNames.map(async p => {
+    return {
+      name: p,
+      langs: await fs.readdir(path.resolve(projectPath, p))
+    }
+  }));
+  console.log(projects);
   res.render('projects', {projects});
 });
 
