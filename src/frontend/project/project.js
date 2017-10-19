@@ -75,7 +75,8 @@ export default class Project extends React.Component {
               <CodeView contentFiles={this.state.contentFiles}
                         fileTabIndex={this.state.fileTabIndex}
                         setFileTabIndex={i => this.setState({fileTabIndex: i})}
-                        closeFileTab={this.closeFileTab.bind(this)}/>
+                        closeFileTab={this.closeFileTab.bind(this)}
+                        lang={this.state.lang}/>
               <TeachingNotes teachingNotes={this.state.teachingNotes}/>
             </SplitPane>
           </SplitPane>

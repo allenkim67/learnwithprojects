@@ -31,7 +31,7 @@ export default class CodeView extends React.Component {
           </TabList>
 
           {this.props.contentFiles.map(f => <TabPanel key={f.name}>
-            <SyntaxHighlighter language='python'
+            <SyntaxHighlighter language={this.props.lang}
                                style={tomorrow}
                                className={styles.code}
                                customStyle={{paddingLeft: 0}}
@@ -103,7 +103,7 @@ function LineNumberWrapper(file) {
         border: 'thin solid grey'
       };
       return diff ? (
-        <SyntaxHighlighter language='python'
+        <SyntaxHighlighter language={this.props.lang}
                            style={tomorrow}
                            customStyle={style}>
           {diff.oldContent}
