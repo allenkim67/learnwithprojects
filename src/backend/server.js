@@ -30,8 +30,17 @@ app.get('/', async (req, res) => {
       langs: await fs.readdir(path.resolve(projectPath, p))
     }
   }));
-  console.log(projects);
   res.render('projects', {projects});
+});
+
+app.get('/blackjack/:commit?', async (req, res) => {
+  if (req.params.commit && req.params.commit !== 'python') {
+    res.redirect(path.resolve('/blackjack/python/', req.params.commit));
+  } else if (req.params.commit === 'python') {
+    res.render('project');
+  } else {
+    res.redirect('/blackjack/python');
+  }
 });
 
 app.get('/:project/:lang/:commit?', async (req, res) => {

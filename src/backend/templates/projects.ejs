@@ -3,12 +3,17 @@
   <ul>
     <% for (var i = 0; i < projects.length; i++) { %>
     <li>
-      <%= projects[i].name %> -
+      <%= projects[i].name %>
+      <ul>
       <% for (var j = 0; j < projects[i].langs.length; j++) { %>
-        <a href="/<%= projects[i].name %>/<%= projects[i].langs[j] %>">
-          <%= projects[i].langs[j] %>
-        </a>
+        <li>
+          <a href="/<%= projects[i].name %>/<%= projects[i].langs[j] %>">
+            <%= projects[i].langs[j] %>
+          </a>
+        </li>
       <% } %>
+      </ul>
+      <br/>
     </li>
     <% } %>
   </ul>
