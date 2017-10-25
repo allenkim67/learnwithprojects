@@ -30,15 +30,19 @@ function _getContentFiles(tree, diffs, lang, force=[]) {
     .filter(node => _.includes(force, node.entry.path()) ||
                     _.includes(['newFile', 'editedFile'], _getStatus(node, diffs)))
     .map(async node => {
-      const blob = await node.entry.getBlob();
-      const content = '<pre><code>' + hljs.highlight(lang, blob.toString()).value + '</code></pre>';
+      const content = (await node.entry.getBlob()).toString();
       return {
         ..._formatEntry(node, diffs),
-        content,
+        content: _highlight(lang, content),
+        numLines: (content.match(/\r?\n/g) || '').length + 1,
         diff: diffs[node.entry.path()] ? diffs[node.entry.path()].diffs : null
       };
     })
   );
+}
+
+function _highlight(lang, value) {
+  return '<pre><code>' + hljs.highlight(lang, value).value + '</code></pre>'
 }
 
 function _formatEntry(node, diffs, project) {

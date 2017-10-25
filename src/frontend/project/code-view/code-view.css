@@ -1,10 +1,10 @@
 .code {
-  background: black;
+  background: #1d1f21;
   color: #c5c8c6;
-  font-size: smaller;
-  overflow: auto;
   height: calc(100vh - 86px);
   padding: 6px;
+  font-size: smaller;
+  overflow: auto;
 }
 
 .tab {
