@@ -16,7 +16,7 @@ async function getFiles(project, lang, commit, force=[]) {
   tree = treeUtil.prune(tree, node => {
     return _.includes(['.gitignore', '_teaching_notes.md'], node.entry.name());
   });
-  const diffs = await _getDiff(commit);
+  const diffs = await _getDiff(commit, lang);
   const treeFiles = treeUtil.map(tree, node => _formatEntry(node, diffs, project));
 
   return {
@@ -42,7 +42,7 @@ function _getContentFiles(tree, diffs, lang, force=[]) {
 }
 
 function _highlight(lang, value) {
-  return '<pre><code>' + hljs.highlight(lang, value).value + '</code></pre>'
+  return '<pre class="hljs"><code>' + hljs.highlight(lang, value).value + '</code></pre>'
 }
 
 function _formatEntry(node, diffs, project) {
@@ -64,7 +64,7 @@ function _getStatus(node, diffs) {
 async function getFileByPath(project, lang, commitId, path) {
   const repo = await _getRepo(project, lang);
   const commit = await repo.getCommit(commitId);
-  const diffs = await _getDiff(commit);
+  const diffs = await _getDiff(commit, lang);
   const tree = await _entryTree(await commit.getTree());
   const node = await treeUtil.bfs(tree, node => {
     return !node.children && node.entry.path() === path;
@@ -94,7 +94,7 @@ function _getRepo(project, lang) {
   return nodegit.Repository.open(projectPath);
 }
 
-async function _getDiff(commit) {
+async function _getDiff(commit, lang) {
   const diffs = await commit.getDiff();
   const patches = await diffs[0].patches();
 
@@ -142,11 +142,13 @@ async function _getDiff(commit) {
         [addedLines[0].newLineno(), _.last(addedLines).newLineno()] :
         [removedLines[0].oldLineno(), removedLines[0].oldLineno()];
 
+      const oldContent = removedLines.reduce((content, line) => content + line.content(), '');
+
       return {
         start,
         end,
         type,
-        oldContent: removedLines.reduce((content, line) => content + line.content(), '')
+        oldContent: _highlight(lang, oldContent)
       };
     });
   }

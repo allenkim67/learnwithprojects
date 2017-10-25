@@ -48,8 +48,10 @@ class LineNumberGroup extends React.Component {
 
     return diff.type && diff.type !== 'add' ? (
       <div>
-        <a data-tip={diff.oldContent} data-event='click focus'>{this.lineNo()}</a>
-        <ReactTooltip place="right" globalEventOff='click' />
+        <a data-tip={diff.oldContent} data-event='click focus'>
+          {this.lineNo()}
+        </a>
+        <ReactTooltip className={styles.popup} html place="right" globalEventOff='click' />
       </div>
     ) : this.lineNo();
   }

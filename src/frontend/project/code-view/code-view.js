@@ -1,5 +1,6 @@
 import 'react-treeview/react-treeview.css'
 import 'react-tabs/style/react-tabs.css'
+import './hljs-global.css'
 
 import React from 'react'
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs'

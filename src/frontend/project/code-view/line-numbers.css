@@ -25,3 +25,7 @@
   background: #10849a;
   cursor: pointer;
 }
+
+.popup {
+  border: solid thin grey;
+}
