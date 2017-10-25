@@ -69,9 +69,13 @@ async function getFileByPath(project, lang, commitId, path) {
   const node = await treeUtil.bfs(tree, node => {
     return !node.children && node.entry.path() === path;
   });
+
+  const content = (await node.entry.getBlob()).toString();
+
   return {
     ..._formatEntry(node, diffs, project),
-    content: (await node.entry.getBlob()).toString()
+    content: _highlight(lang, content),
+    numLines: (content.match(/\r?\n/g) || '').length + 1
   }
 }
 
