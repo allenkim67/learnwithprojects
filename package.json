@@ -6,12 +6,12 @@
   "license": "MIT",
   "scripts": {
     "start": "webpack && forever start index.js",
+    "restart": "webpack && forever restartall",
     "dev-server": "nodemon index.js",
     "dev-build": "webpack -w",
     "dev": "npm-run-all --parallel dev-server dev-build"
   },
   "dependencies": {
-    "@allenkim67/react-syntax-highlighter": "^5.7.0",
     "axios": "^0.16.2",
     "body-parser": "^1.18.2",
     "compression": "^1.7.1",
@@ -20,6 +20,7 @@
     "express-async-errors": "^2.0.0",
     "forever": "^0.15.3",
     "fs-extra": "^4.0.2",
+    "highlight.js": "^9.12.0",
     "lodash": "^4.17.4",
     "nodegit": "^0.20.1",
     "normalize.css": "^7.0.0",

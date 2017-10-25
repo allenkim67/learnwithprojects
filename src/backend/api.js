@@ -6,7 +6,9 @@ const git = require('./git');
 router.post('/:project/:lang/:commit?', async (req, res) => {
   const commits = _.reverse(await git.getCommits(req.params.project, req.params.lang));
   const commit = _.find(commits, c => c.sha() == req.params.commit) || commits[0];
-  const {treeFiles, contentFiles} = await git.getFiles(req.params.project, commit, req.body.force);
+  const {treeFiles, contentFiles} = await git.getFiles(
+    req.params.project, req.params.lang, commit, req.body.force
+  );
 
   res.json({
     lang: req.params.lang,

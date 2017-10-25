@@ -1,7 +1,10 @@
 .code {
+  background: black;
+  color: #c5c8c6;
   font-size: smaller;
   overflow: auto;
   height: calc(100vh - 86px);
+  padding: 6px;
 }
 
 .tab {

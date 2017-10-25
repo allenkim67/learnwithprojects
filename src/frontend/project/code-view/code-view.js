@@ -6,15 +6,8 @@ import { Tab, Tabs, TabList, TabPanel } from 'react-tabs'
 import Popover from 'react-popover'
 import GoX from 'react-icons/go/x'
 import styles from './code-view.css'
+import 'highlight.js/styles/tomorrow-night.css'
 import sharedStyles from '../../shared.css'
-
-import SyntaxHighlighter, { registerLanguage } from "@allenkim67/react-syntax-highlighter/dist/light"
-import js from '@allenkim67/react-syntax-highlighter/dist/languages/javascript';
-import python from '@allenkim67/react-syntax-highlighter/dist/languages/python';
-import tomorrow from '@allenkim67/react-syntax-highlighter/dist/styles/tomorrow-night'
-
-registerLanguage('javascript', js);
-registerLanguage('python', python);
 
 export default class CodeView extends React.Component {
   render() {
@@ -31,15 +24,7 @@ export default class CodeView extends React.Component {
           </TabList>
 
           {this.props.contentFiles.map(f => <TabPanel key={f.name}>
-            <SyntaxHighlighter language={this.props.lang}
-                               style={tomorrow}
-                               className={styles.code}
-                               customStyle={{paddingLeft: 0}}
-                               showLineNumbers={true}
-                               lineNumberStyle={this.lineStyle.bind(this, f)}
-                               LineNumberWrapper={LineNumberWrapper(f)}>
-              {f.content}
-            </SyntaxHighlighter>
+            <div className={styles.code} dangerouslySetInnerHTML={{ __html: f.content }}/>
           </TabPanel>)}
         </Tabs>
       </div>
@@ -102,13 +87,7 @@ function LineNumberWrapper(file) {
         fontSize: 'smaller',
         border: 'thin solid grey'
       };
-      return diff ? (
-        <SyntaxHighlighter language={this.props.lang}
-                           style={tomorrow}
-                           customStyle={style}>
-          {diff.oldContent}
-        </SyntaxHighlighter>
-      ) : '';
+      return diff ? diff.oldContent : '';
     }
   }
 }

@@ -2,6 +2,7 @@ const path = require('path');
 const _ = require('lodash');
 const nodegit = require('nodegit');
 const treeUtil = require('../shared/tree-util');
+const hljs = require('highlight.js');
 
 async function getCommits(project, lang) {
   const repo = await _getRepo(project, lang);
@@ -10,7 +11,7 @@ async function getCommits(project, lang) {
   return await walker.getCommitsUntil(c => true);
 }
 
-async function getFiles(project, commit, force=[]) {
+async function getFiles(project, lang, commit, force=[]) {
   let tree = await _entryTree(await commit.getTree());
   tree = treeUtil.prune(tree, node => {
     return _.includes(['.gitignore', '_teaching_notes.md'], node.entry.name());
@@ -20,18 +21,20 @@ async function getFiles(project, commit, force=[]) {
 
   return {
     treeFiles,
-    contentFiles: await _getContentFiles(tree, diffs, force)
+    contentFiles: await _getContentFiles(tree, diffs, lang, force)
   };
 }
 
-function _getContentFiles(tree, diffs, force=[]) {
+function _getContentFiles(tree, diffs, lang, force=[]) {
   return Promise.all(treeUtil.leafOnly(tree)
     .filter(node => _.includes(force, node.entry.path()) ||
                     _.includes(['newFile', 'editedFile'], _getStatus(node, diffs)))
     .map(async node => {
+      const blob = await node.entry.getBlob();
+      const content = '<pre><code>' + hljs.highlight(lang, blob.toString()).value + '</code></pre>';
       return {
         ..._formatEntry(node, diffs),
-        content: (await node.entry.getBlob()).toString(),
+        content,
         diff: diffs[node.entry.path()] ? diffs[node.entry.path()].diffs : null
       };
     })
