@@ -25,7 +25,7 @@ export default class CodeView extends React.Component {
 
           {this.props.contentFiles.map(f => <TabPanel key={f.name}>
             <div className={styles.code}>
-              <LineNumbers numLines={f.numLines}/>
+              <LineNumbers file={f}/>
               <div dangerouslySetInnerHTML={{ __html: f.content }}/>
             </div>
           </TabPanel>)}

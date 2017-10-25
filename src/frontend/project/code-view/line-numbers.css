@@ -1,6 +1,27 @@
 .container {
   float: left;
   text-align: right;
-  padding-left: 8px;
-  margin-right: 15px;
+  margin-right: 11px;
+}
+
+.line {
+  padding-left: 12px;
+  padding-right: 5px;
+}
+
+.add {
+  composes: line;
+  background: #0c980d;
+}
+
+.remove {
+  composes: line;
+  background: grey;
+  cursor: pointer;
+}
+
+.change {
+  composes: line;
+  background: #10849a;
+  cursor: pointer;
 }

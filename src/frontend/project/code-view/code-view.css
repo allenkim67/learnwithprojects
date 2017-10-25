@@ -2,7 +2,7 @@
   background: #1d1f21;
   color: #c5c8c6;
   height: calc(100vh - 86px);
-  padding: 6px;
+  padding: 6px 0;
   font-size: smaller;
   overflow: auto;
 }
