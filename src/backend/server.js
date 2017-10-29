@@ -34,10 +34,10 @@ app.get('/', async (req, res) => {
 });
 
 app.get('/blackjack/:commit?', async (req, res) => {
-  if (req.params.commit && req.params.commit !== 'python') {
-    res.redirect(path.resolve('/blackjack/python/', req.params.commit));
-  } else if (req.params.commit === 'python') {
+  if (req.params.commit === 'javascript' || req.params.commit === 'python') {
     res.render('project');
+  } else if (req.params.commit && req.params.commit !== 'python') {
+    res.redirect(path.resolve('/blackjack/python/', req.params.commit));
   } else {
     res.redirect('/blackjack/python');
   }
