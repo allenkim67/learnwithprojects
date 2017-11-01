@@ -4,6 +4,8 @@ const nodegit = require('nodegit');
 const treeUtil = require('../shared/tree-util');
 const hljs = require('highlight.js');
 
+const FILE_EXCLUDES = ['.gitignore', '_teaching_notes.md', 'node_modules', 'package-lock.json'];
+
 async function getCommits(project, lang) {
   const repo = await _getRepo(project, lang);
   const walker = repo.createRevWalk();
@@ -12,10 +14,7 @@ async function getCommits(project, lang) {
 }
 
 async function getFiles(project, lang, commit, force=[]) {
-  let tree = await _entryTree(await commit.getTree());
-  tree = treeUtil.prune(tree, node => {
-    return _.includes(['.gitignore', '_teaching_notes.md'], node.entry.name());
-  });
+  let tree = await _entryTree(await commit.getTree(), {excludes: FILE_EXCLUDES});
   const diffs = await _getDiff(commit, lang);
   const treeFiles = treeUtil.map(tree, node => _formatEntry(node, diffs, project));
 
@@ -154,12 +153,14 @@ async function _getDiff(commit, lang) {
   }
 }
 
-async function _entryTree(entry) {
+async function _entryTree(entry, opts={}) {
+  if (entry.name && _.includes(opts.excludes, entry.name())) return null;
+
   if (entry instanceof nodegit.Tree || entry.isTree()) {
     const tree = entry instanceof nodegit.Tree ? entry : await entry.getTree();
     return {
       entry,
-      children: await Promise.all(tree.entries().map(_entryTree))
+      children: _.compact(await Promise.all(tree.entries().map(e => _entryTree(e, opts))))
     }
   } else {
     return {entry};

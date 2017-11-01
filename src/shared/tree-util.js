@@ -21,12 +21,6 @@ function map(node, fn) {
     fn(node);
 }
 
-function prune(node, fn) {
-  return node.children ?
-    {...node, children: node.children.filter(child => prune(child, fn))} :
-    fn(node) ? null : node;
-}
-
 function leafOnly(node) {
   if (node.children) {
     return _.flatten(node.children.map(leafOnly));
@@ -35,4 +29,4 @@ function leafOnly(node) {
   }
 }
 
-module.exports = {bfs, map, prune, leafOnly};
+module.exports = {bfs, map, leafOnly};
