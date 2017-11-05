@@ -25,6 +25,7 @@
     "nodegit": "^0.20.1",
     "normalize.css": "^7.0.0",
     "react": "^15.6.1",
+    "react-disqus-comments": "^1.1.1",
     "react-dom": "^15.6.1",
     "react-ga": "^2.3.5",
     "react-icons": "^2.2.5",
@@ -34,7 +35,8 @@
     "react-split-pane": "^0.1.66",
     "react-tabs": "^2.0.0",
     "react-tooltip": "^3.4.0",
-    "react-treeview": "^0.4.7"
+    "react-treeview": "^0.4.7",
+    "url-join": "^2.0.2"
   },
   "devDependencies": {
     "babel-core": "^6.26.0",

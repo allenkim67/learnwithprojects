@@ -9,7 +9,7 @@ import styles from './project.css'
 
 import Sidebar from './sidebar/sidebar'
 import CodeView from './code-view/code-view'
-import TeachingNotes from './teaching-notes/teaching-notes'
+import Sidebar2 from './sidebar2/sidebar2'
 import Banner from './banner/banner'
 
 export default class Project extends React.Component {
@@ -77,7 +77,9 @@ export default class Project extends React.Component {
                         setFileTabIndex={i => this.setState({fileTabIndex: i})}
                         closeFileTab={this.closeFileTab.bind(this)}
                         lang={this.state.lang}/>
-              <TeachingNotes teachingNotes={this.state.teachingNotes}/>
+              <Sidebar2 teachingNotes={this.state.teachingNotes}
+                        location={this.props.match}
+                        commit={this.state.commit}/>
             </SplitPane>
           </SplitPane>
         </div>
